@@ -3,13 +3,13 @@
 // API Configuration - using relative paths since frontend and backend are on same server
 const API_URL = '/api';
 
-// Global array to store all messages (synced with backend)
+// global array to store all messages (synced with backend)
 let messages = [];
 
-// Variable to track which message is being edited
+// variable to track which message is being edited
 let editingId = null;
 
-// Map language codes to full names for display
+// map language codes to full names for display
 const languageNames = {
     en: 'English',
     es: 'Spanish',
@@ -17,7 +17,7 @@ const languageNames = {
 };
 
 /**
- * Fetches all messages from the backend
+ * fetch all messages from the backend
  */
 async function fetchMessages() {
     try {
@@ -38,7 +38,7 @@ async function fetchMessages() {
 }
 
 /**
- * Shows error message to user
+ * shows error message to user
  */
 function showError(message) {
     const errorDiv = document.createElement('div');
@@ -66,7 +66,7 @@ function showError(message) {
 }
 
 /**
- * Shows success message to user
+ * shows success message to user
  */
 function showSuccess(message) {
     const successDiv = document.createElement('div');
@@ -94,22 +94,22 @@ function showSuccess(message) {
 }
 
 /**
- * Handles form submission for creating or updating messages
+ * handles form submission for creating or updating messages
  */
 async function handleSubmit(e) {
     e.preventDefault();
 
-    // Show loading indicator
+    // show loading indicator
     document.getElementById('loadingIndicator').classList.add('active');
 
-    // Get form values
+    // get form values
     const userName = document.getElementById('userName').value;
     const sourceLang = document.getElementById('sourceLang').value;
     const targetLang = document.getElementById('targetLang').value;
     const messageText = document.getElementById('messageText').value;
 
     try {
-        // Create or update message via API
+        // create or update message via API
         const url = editingId 
             ? `${API_URL}/messages/${editingId}`
             : `${API_URL}/messages`;
@@ -135,10 +135,10 @@ async function handleSubmit(e) {
             showSuccess(editingId ? 'Message updated!' : 'Message sent!');
             editingId = null;
             
-            // Refresh messages from backend
+            // refresh messages from backend
             await fetchMessages();
             
-            // Clear the form
+            // clear the form
             document.getElementById('messageForm').reset();
         } else {
             showError(data.error || 'Failed to save message');
@@ -147,30 +147,30 @@ async function handleSubmit(e) {
         console.error('Error saving message:', error);
         showError('Could not connect to server');
     } finally {
-        // Hide loading indicator
+        // hide loading indicator
         document.getElementById('loadingIndicator').classList.remove('active');
     }
 }
 
 /**
- * Renders all messages to the DOM
+ * renders all messages to the DOM
  */
 function renderMessages() {
     const messageList = document.getElementById('messageList');
     const emptyState = document.getElementById('emptyState');
 
-    // Show empty state if no messages
+    // show empty state if no messages
     if (messages.length === 0) {
         emptyState.style.display = 'block';
         messageList.innerHTML = '';
         return;
     }
 
-    // Hide empty state and render messages
+    // hide empty state and render messages
     emptyState.style.display = 'none';
     
     messageList.innerHTML = messages.map(msg => {
-        // Format timestamp
+        // format timestamp
         const timestamp = new Date(msg.timestamp).toLocaleString();
         
         return `
@@ -214,7 +214,7 @@ function renderMessages() {
 }
 
 /**
- * Escape HTML to prevent XSS attacks
+ * escape HTML to prevent XSS attacks
  */
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -223,30 +223,32 @@ function escapeHtml(text) {
 }
 
 /**
- * Prepares a message for editing
+ * prepares a message for editing
  */
 function editMessage(id) {
     const message = messages.find(m => m._id === id);
     if (!message) return;
 
-    // Populate form fields
+    // populate form fields
     document.getElementById('userName').value = message.userName;
     document.getElementById('sourceLang').value = message.sourceLang;
     document.getElementById('targetLang').value = message.targetLang;
     document.getElementById('messageText').value = message.originalText;
 
-    // Set editing state
+    // set editing state
     editingId = id;
     
-    // Scroll to form
+    // scroll to form
     document.getElementById('messageForm').scrollIntoView({ behavior: 'smooth' });
     
-    // Focus on text area
+    // focus on text area
     document.getElementById('messageText').focus();
 }
 
+
+// not sure if I want to keep delete and clear as an option, since it would be good to have a history of exchanges for team members
 /**
- * Deletes a message
+ * deletes a message
  */
 async function deleteMessage(id) {
     if (!confirm('Are you sure you want to delete this message?')) {
@@ -273,7 +275,7 @@ async function deleteMessage(id) {
 }
 
 /**
- * Clears all messages
+ * clears all messages
  */
 async function clearAllMessages() {
     if (!confirm('Are you sure you want to clear all messages? This cannot be undone.')) {
@@ -299,7 +301,7 @@ async function clearAllMessages() {
     }
 }
 
-// Add CSS animations
+// add CSS animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -326,11 +328,11 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Initialize app
+// initialize app
 document.getElementById('messageForm').addEventListener('submit', handleSubmit);
 
-// Fetch messages when page loads
+// fetch messages when page loads
 fetchMessages();
 
-// Refresh messages every 30 seconds
+// refresh messages every 30 seconds
 setInterval(fetchMessages, 30000);

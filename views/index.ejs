@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <!-- Link to CSS in public folder -->
+    <!-- link to CSS in public folder -->
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <!-- Main container -->
+    <!-- main container -->
     <div class="container">
-        <!-- Header section with title and description -->
+        <!-- header section with title and description -->
         <div class="header">
             <h1>🌍 <%= title %></h1>
             <p>Communicate naturally across languages with AI-powered cultural context</p>
@@ -23,9 +23,9 @@
             </div>
         </div>
 
-        <!-- Main chat container -->
+        <!-- main chat container -->
         <div class="chat-container">
-            <!-- Chat header with clear all button -->
+            <!-- chat header with clear all button -->
             <div class="chat-header">
                 <h2>Team Messages</h2>
                 <button class="btn btn-danger" onclick="clearAllMessages()">
@@ -33,25 +33,25 @@
                 </button>
             </div>
 
-            <!-- Message list section -->
+            <!--mMessage list section -->
             <div class="message-list" id="messageList">
                 <!-- messages go here -->
                 </div>
 
-                <!-- Empty state shown when no messages, outside messageList -->
+                <!-- empty state shown when no messages, outside messageList -->
                 <div class="empty-state" id="emptyState" style="display: none;">
                     <div class="empty-state-icon">💬</div>
                     <h3>No messages yet</h3>
                     <p>Start a conversation with your team!</p>
                 </div>
 
-            <!-- Loading indicator shown during translation -->
+            <!-- loading indicator shown during translation -->
             <div class="loading" id="loadingIndicator">
                 <div class="spinner"></div>
                 <p class="loading-text">AI is translating with cultural context...</p>
             </div>
 
-            <!-- Message form container -->
+            <!-- message form container -->
             <div class="form-container">
                 <form id="messageForm">
                     <!-- First row: Name and language selectors -->
@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     
-                    <!-- Submit button -->
+                    <!-- submit button -->
                     <button type="submit" class="btn btn-primary">
                         ✉️ Send Message
                     </button>
@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <!-- Link to JavaScript in public folder -->
+    <!-- link to JavaScript in public folder -->
     <script src="/js/app.js"></script>
 </body>
 </html>

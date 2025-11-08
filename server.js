@@ -1,4 +1,4 @@
-// server.js - Main server file
+// server.js - main server file
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -7,18 +7,18 @@ const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set EJS as templating engine
+// set EJS as templating engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files (CSS, JS, images)
+// serve static files (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware
+// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging middleware
+//request logging middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('✅ MongoDB connected successfully'))
 .catch((err) => {
   console.error('❌ MongoDB connection error:', err);
-  console.log('📊 Database:', mongoose.connection.name); // Shows which database you're connected to
+  console.log('📊 Database:', mongoose.connection.name); // shows which database you're connected to
   console.log('🔗 Host:', mongoose.connection.host);
 })
 .catch((err) => {
@@ -40,7 +40,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   process.exit(1);
 });
 
-// Message Schema
+// message Schema
 const messageSchema = new mongoose.Schema({
   userName: {
     type: String,
@@ -79,7 +79,7 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', messageSchema);
 
-// Translation Service
+// translation Service
 const languageNames = {
   en: 'English',
   es: 'Spanish',
@@ -88,7 +88,8 @@ const languageNames = {
 
 async function translateMessage(text, sourceLang, targetLang) {
   try {
-    // Fallback idiom translations
+    // fallback idiom translations
+    // need to DEFINITELY change these lol not right at all
     const idiomMap = {
       "i'm in a pickle": {
         es: "Estoy en un aprieto",
@@ -126,7 +127,7 @@ async function translateMessage(text, sourceLang, targetLang) {
 
     const lowerText = text.toLowerCase();
     
-    // Check for idioms
+    // check for idioms
     for (const [idiom, translations] of Object.entries(idiomMap)) {
       if (lowerText.includes(idiom) && translations[targetLang]) {
         return {
@@ -136,8 +137,8 @@ async function translateMessage(text, sourceLang, targetLang) {
       }
     }
 
-    // Basic translation placeholder
-    // TODO: Integrate with proper translation API (Google Translate, DeepL, etc.)
+    // basic translation placeholder
+    // TODO: Integrate with proper translation API (Google Translate, DeepL, etc.) Find 1 or 2 make sense, are they free, what do they do? etc
     return {
       translation: `[${languageNames[targetLang]}] ${text}`,
       note: "Basic translation - integrate a proper translation API for production"
@@ -153,7 +154,7 @@ async function translateMessage(text, sourceLang, targetLang) {
 // FRONTEND ROUTES (EJS)
 // ============================================
 
-// Home page - renders the main EJS template
+// home page - renders the main EJS template
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Multilingual Team Chat',
@@ -165,7 +166,7 @@ app.get('/', (req, res) => {
 // API ROUTES
 // ============================================
 
-// Health check
+// health check
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -174,7 +175,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Get all messages
+// get all messages
 app.get('/api/messages', async (req, res) => {
   try {
     const messages = await Message.find()
@@ -195,7 +196,7 @@ app.get('/api/messages', async (req, res) => {
   }
 });
 
-// Get single message
+// get single message
 app.get('/api/messages/:id', async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
@@ -220,12 +221,12 @@ app.get('/api/messages/:id', async (req, res) => {
   }
 });
 
-// Create new message
+// create new message
 app.post('/api/messages', async (req, res) => {
   try {
     const { userName, sourceLang, targetLang, originalText } = req.body;
 
-    // Validation
+    // validation
     if (!userName || !sourceLang || !targetLang || !originalText) {
       return res.status(400).json({
         success: false,
@@ -233,14 +234,14 @@ app.post('/api/messages', async (req, res) => {
       });
     }
 
-    // Translate the message
+    // translate the message
     const translationResult = await translateMessage(
       originalText,
       sourceLang,
       targetLang
     );
 
-    // Create new message
+    // create new message
     const message = new Message({
       userName,
       sourceLang,
@@ -265,12 +266,12 @@ app.post('/api/messages', async (req, res) => {
   }
 });
 
-// Update message
+// update message
 app.put('/api/messages/:id', async (req, res) => {
   try {
     const { userName, sourceLang, targetLang, originalText } = req.body;
 
-    // Translate the updated message
+    // translate the updated message
     const translationResult = await translateMessage(
       originalText,
       sourceLang,
@@ -310,7 +311,7 @@ app.put('/api/messages/:id', async (req, res) => {
   }
 });
 
-// Delete message
+// delete message
 app.delete('/api/messages/:id', async (req, res) => {
   try {
     const message = await Message.findByIdAndDelete(req.params.id);
@@ -335,7 +336,7 @@ app.delete('/api/messages/:id', async (req, res) => {
   }
 });
 
-// Delete all messages
+// delete all messages
 app.delete('/api/messages', async (req, res) => {
   try {
     const result = await Message.deleteMany({});
@@ -353,7 +354,7 @@ app.delete('/api/messages', async (req, res) => {
   }
 });
 
-// Error handling middleware
+// error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({
@@ -370,10 +371,12 @@ app.use((req, res) => {
   });
 });
 
-// Start server
+// start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Visit: http://localhost:${PORT}`);
   console.log(`🔗 API: http://localhost:${PORT}/api`);
 });
+
+// help from claude here

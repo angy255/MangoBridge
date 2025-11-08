@@ -1,11 +1,11 @@
-/* Reset default browser styles */
+/* reset default browser styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body styling with gradient background */
+/* body with gradient background */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -13,13 +13,13 @@ body {
     padding: 20px;
 }
 
-/* Main container to center content */
+/* main container to center content */
 .container {
     max-width: 1000px;
     margin: 0 auto;
 }
 
-/* Header section styling */
+/* header section styling */
 .header {
     background: white;
     border-radius: 15px;
@@ -39,7 +39,7 @@ body {
     font-size: 16px;
 }
 
-/* Badge styling for header tags */
+/* badge styling for header tags */
 .badges {
     display: flex;
     gap: 10px;
@@ -62,7 +62,7 @@ body {
     background: #17a2b8;
 }
 
-/* Main chat container */
+/* main chat container */
 .chat-container {
     background: white;
     border-radius: 15px;
@@ -71,7 +71,7 @@ body {
     min-height: 600px;
 }
 
-/* Header within chat container */
+/* header within chat container */
 .chat-header {
     display: flex;
     justify-content: space-between;
@@ -86,7 +86,7 @@ body {
     font-size: 24px;
 }
 
-/* Button styling */
+/* button styling */
 .btn {
     padding: 10px 20px;
     border: none;
@@ -139,7 +139,7 @@ body {
     padding: 6px 12px;
 }
 
-/* Message list container with scroll */
+/* message list container with scroll */
 .message-list {
     background: #f8f9fa;
     border-radius: 10px;
@@ -149,7 +149,7 @@ body {
     overflow-y: auto;
 }
 
-/* Individual message card */
+/* individual message card */
 .message-card {
     background: white;
     border-radius: 10px;
@@ -164,7 +164,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Message header with user info */
+/* message header with user info */
 .message-header {
     display: flex;
     justify-content: space-between;
@@ -199,7 +199,7 @@ body {
     font-size: 12px;
 }
 
-/* Original message text */
+/* original message text */
 .message-text {
     margin: 15px 0;
     color: #333;
@@ -210,7 +210,7 @@ body {
     color: #555;
 }
 
-/* Translation section styling */
+/* translation section styling */
 .translation {
     background: #e3f2fd;
     padding: 15px;
@@ -242,14 +242,14 @@ body {
     font-style: italic;
 }
 
-/* Action buttons for each message */
+/* action buttons for each message */
 .message-actions {
     display: flex;
     gap: 10px;
     margin-top: 15px;
 }
 
-/* Empty state when no messages */
+/* empty state when no messages */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -270,7 +270,7 @@ body {
     color: #666;
 }
 
-/* Loading indicator */
+/* loading indicator */
 .loading {
     display: none;
     text-align: center;
@@ -284,7 +284,7 @@ body {
     display: block;
 }
 
-/* Spinner animation */
+/* spinner animation */
 .spinner {
     width: 40px;
     height: 40px;
@@ -305,14 +305,14 @@ body {
     font-weight: 600;
 }
 
-/* Form container styling */
+/* form container styling */
 .form-container {
     background: #f8f9fa;
     padding: 25px;
     border-radius: 10px;
 }
 
-/* Form grid layout */
+/* form grid layout */
 .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -320,7 +320,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* Form group styling */
+/* form group styling */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -333,7 +333,7 @@ body {
     font-size: 14px;
 }
 
-/* Input and select styling */
+/* input and select styling */
 .form-input,
 .form-select,
 .form-textarea {
@@ -357,7 +357,7 @@ body {
     min-height: 80px;
 }
 
-/* Responsive design for mobile */
+/* responsive design for mobile */
 @media (max-width: 768px) {
     .chat-header {
         flex-direction: column;
@@ -384,3 +384,5 @@ body {
         justify-content: center;
     }
 }
+
+/* done with the help of claude */
