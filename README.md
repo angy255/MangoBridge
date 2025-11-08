@@ -1,4 +1,4 @@
-# 🌍 Multilingual Team App: Breaking Language Barriers with AI 🤖
+# 🌍 Multilingual Team App: Breaking Barriers with AI 🤖
 Built to help global teams communicate naturally across languages without losing meaning in translation.
 
 Translate messages between English, Spanish, and French while preserving cultural context and idioms — because "I'm in a pickle" shouldn't become "Estoy en un pepinillo" 🥒
@@ -56,17 +56,17 @@ Translate messages between English, Spanish, and French while preserving cultura
 
 ## 💡 Future Enhancements
 
-- 🎤 Voice message translation — integrate Deepgram for audio translation
-- 🔌 WebSocket integration — real-time chat with Socket.io
-- 👥 User authentication — add user accounts and team management
-- 🌍 More languages — expand to 10+ languages (German, Chinese, Japanese, Arabic)
-- 📱 Mobile App — build React Native version
-- 💬 Message reactions — add emoji reactions and possibly threading
-- 🔍 Search functionality — search through message history
-- 📊 Analytics dashboard — track translation usage and statistics
+- 🎤 Voice message translation — Integrate Deepgram for audio translation
+- 🔌 WebSocket integration — Real-time chat with Socket.io
+- 👥 User authentication — Add user accounts and team management
+- 🌍 More languages — Expand to 10+ languages (German, Chinese, Japanese, Arabic)
+- 📱 Mobile App — Build React Native version
+- 💬 Message reactions — Add emoji reactions and possibly threading
+- 🔍 Search functionality — Search through message history
+- 📊 Analytics dashboard — Track translation usage and statistics
 - 🔔 Notifications — Real-time browser notifications for new messages
-- 🔐 End-to-end encryption — secure message encryption
+- 🔐 End-to-end encryption — Secure message encryption
 - 🤝 Team collaboration — Multiple team rooms and channels
 
 ## 🎨 Credits
-- Inspiration — the need for better multilingual team collaboration
+- Inspiration — The need for better multilingual team collaboration
