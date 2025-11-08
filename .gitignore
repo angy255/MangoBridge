@@ -1,0 +1,9 @@
+node_modules
+.env
+
+# OS-specific junk
+.DS_Store
+
+# ignore all files ending in .log, like debug.log, error.log, server.log, etc
+
+*.log
