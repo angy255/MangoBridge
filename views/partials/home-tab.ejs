@@ -1,0 +1,95 @@
+<div id="home" class="tab-content active">
+    <div class="header">
+        <h1>🌍 Multilingual Team Chat</h1>
+        <p>Communicate naturally across languages with AI-powered translation</p>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Recent Messages</h2>
+            <button class="btn btn-warning" id="archiveSelectedBtn">
+                📦 Archive Selected
+            </button>
+        </div>
+
+        <div class="message-list scrollable" id="homeMessageList"></div>
+
+        <div class="empty-state" id="homeEmptyState" style="display: none;">
+            <div class="empty-state-icon">💬</div>
+            <h3>No messages yet</h3>
+            <p>Start a conversation with your team!</p>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p class="loading-text">Processing...</p>
+        </div>
+
+        <div class="form-container">
+            <form id="messageForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Source Language</label>
+                        <select class="form-select" id="sourceLang" required>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="zh">Chinese</option>
+                            <option value="ja">Japanese</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="it">Italian</option>
+                            <option value="nl">Dutch</option>
+                            <option value="pl">Polish</option>
+                            <option value="ru">Russian</option>
+                            <option value="ko">Korean</option>
+                            <option value="tr">Turkish</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Translate To</label>
+                        <select class="form-select" id="targetLang" required>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="zh">Chinese</option>
+                            <option value="ja">Japanese</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="it">Italian</option>
+                            <option value="nl">Dutch</option>
+                            <option value="pl">Polish</option>
+                            <option value="ru">Russian</option>
+                            <option value="ko">Korean</option>
+                            <option value="tr">Turkish</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-textarea" id="messageText" required placeholder="Type your message..."></textarea>
+                    </div>
+                </div>
+
+                <div class="translation-preview" id="translationPreview">
+                    <div class="preview-header">📋 Translation Preview:</div>
+                    <div class="preview-content" id="previewContent"></div>
+                </div>
+
+                <div class="button-row">
+                    <button type="button" class="btn btn-secondary" id="previewBtn">
+                        👁️ Preview Translation
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="micButton">
+                        🎤 Record
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        ✉️ Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Multilingual Team Chat</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/alerts.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌍</text></svg>">
+</head>
+<body class="<%= user.theme === 'dark' ? 'dark-mode' : '' %>">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="nav-brand">🌍 Team Chat</div>
+            </div>
+            <div class="nav-right">
+                <a href="/" class="btn btn-secondary">← Back to Chat</a>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>👤 My Profile</h1>
+                <p>Manage your profile settings</p>
+            </div>
+
+            <% if (locals.messages.errors) { %>
+                <% messages.errors.forEach( el => { %>
+                    <div class="alert alert-danger"><%= el.msg %></div>
+                <% }) %>
+            <% } %>
+            <% if (locals.messages.success) { %>
+                <% messages.success.forEach( el => { %>
+                    <div class="alert alert-success"><%= el.msg %></div>
+                <% }) %>
+            <% } %>
+
+            <form action="/profile" method="POST" enctype="multipart/form-data" class="profile-form" id="profileForm">
+                <div class="profile-section">
+                    <h3>Profile Picture</h3>
+                    <div class="avatar-section">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <% if (user.avatar && user.avatar.startsWith('http')) { %>
+                                <img src="<%= user.avatar %>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            <% } else { %>
+                                <%= user.avatar && user.avatar.length > 2 ? user.avatar : user.name[0].toUpperCase() %>
+                            <% } %>
+                        </div>
+                        <div class="avatar-upload">
+                            <button type="button" class="btn btn-primary" id="uploadWidgetBtn">
+                                📷 Upload from Cloudinary Widget
+                            </button>
+                            <p class="help-text">Or upload from file (max 200KB):</p>
+                            <input type="file" name="avatar" id="avatarFile" accept="image/*" class="file-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Account Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Username:</label>
+                            <span><%= user.userName %></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span><%= user.email %></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Member Since:</label>
+                            <span><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Last Active:</label>
+                            <span><%= new Date(user.lastActive).toLocaleString() %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Location (Optional)</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="city" class="form-input" placeholder="e.g., New York" value="<%= user.location && user.location.city ? user.location.city : '' %>">
+                        </div>
+                        <div class="form-group">
+                            <label>State/Province</label>
+                            <input type="text" name="state" class="form-input" placeholder="e.g., NY" value="<%= user.location && user.location.state ? user.location.state : '' %>">
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" name="country" class="form-input" placeholder="e.g., United States" value="<%= user.location && user.location.country ? user.location.country : '' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>About Me</h3>
+                    <textarea name="about" class="form-textarea" placeholder="Tell us about yourself..." maxlength="500"><%= user.about || '' %></textarea>
+                    <p class="help-text">Maximum 500 characters</p>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Theme Preference</h3>
+                    <div class="theme-toggle">
+                        <label class="toggle-option">
+                            <input type="radio" name="theme" value="light" <%= !user.theme || user.theme === 'light' ? 'checked' : '' %> onchange="toggleDarkMode(false)">
+                            <span>☀️ Light Mode</span>
+                        </label>
+                        <label class="toggle-option">
+                            <input type="radio" name="theme" value="dark" <%= user.theme === 'dark' ? 'checked' : '' %> onchange="toggleDarkMode(true)">
+                            <span>🌙 Dark Mode</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">
+                    💾 Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+    <script>
+        // dark mode toggle
+        function toggleDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+        
+        // cloudinary Widget Configuration
+        const cloudName = '<%= cloudName %>';
+        
+        document.getElementById('uploadWidgetBtn').addEventListener('click', () => {
+            cloudinary.openUploadWidget({
+                cloudName: cloudName,
+                uploadPreset: 'ml_default',
+                sources: ['local', 'url', 'camera'],
+                multiple: false,
+                resourceType: 'image',
+                clientAllowedFormats: ['png', 'jpg', 'jpeg', 'gif'],
+                maxFileSize: 200000, // 200KB
+                cropping: true,
+                croppingAspectRatio: 1,
+                croppingShowDimensions: true,
+                folder: 'team-chat-avatars'
+            }, async (error, result) => {
+                if (!error && result && result.event === 'success') {
+                    const imageUrl = result.info.secure_url;
+                    
+                    try {
+                        const response = await fetch('/api/upload-avatar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ imageUrl })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            document.getElementById('avatarPreview').innerHTML = 
+                                `<img src="${imageUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                            
+                            const successMsg = document.createElement('div');
+                            successMsg.className = 'alert alert-success';
+                            successMsg.textContent = 'Profile picture updated successfully!';
+                            document.querySelector('.profile-container').insertBefore(
+                                successMsg, 
+                                document.querySelector('.profile-form')
+                            );
+                            
+                            setTimeout(() => successMsg.remove(), 3000);
+                        }
+                    } catch (err) {
+                        console.error('Error updating avatar:', err);
+                        alert('Failed to update profile picture');
+                    }
+                }
+            });
+        });
+
+        // file input preview
+        document.getElementById('avatarFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // check file size
+                if (file.size > 200000) {
+                    alert('File size must be less than 200KB');
+                    e.target.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('avatarPreview').innerHTML = 
+                        `<img src="${event.target.result}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

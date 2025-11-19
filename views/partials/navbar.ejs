@@ -1,0 +1,38 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-left">
+            <div class="nav-brand">🌍 Team Chat</div>
+            <div class="nav-links">
+                <button class="nav-link active" data-tab="home">
+                    🏠 Home
+                </button>
+                <button class="nav-link" data-tab="unread">
+                    📬 Unread Chats
+                    <span class="unread-badge" id="unreadBadge" style="display: none;">0</span>
+                </button>
+                <button class="nav-link" data-tab="archived">
+                    📁 Archived Chats
+                </button>
+                <button class="nav-link" data-tab="calendar">
+                    📅 Calendar
+                </button>
+                <button class="nav-link" data-tab="meetings">
+                    🎙️ Record Meetings
+                </button>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="/profile" class="user-menu">
+                <div class="user-avatar">
+                    <% if (user.avatar && user.avatar.startsWith('http')) { %>
+                        <img src="<%= user.avatar %>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <% } else { %>
+                        <%= user.avatar || user.name[0].toUpperCase() %>
+                    <% } %>
+                </div>
+                <span><%= user.name %></span>
+            </a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
+</nav>

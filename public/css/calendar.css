@@ -1,0 +1,174 @@
+/* calendar styles */
+.calendar-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.calendar-day:hover {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.calendar-day.has-events {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.calendar-day.today {
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+}
+
+.event-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    min-width: 18px;
+    height: 18px;
+    background: #28a745;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+/* day taskbar (side panel) */
+.day-taskbar {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.taskbar-event-item {
+    background: white;
+    border-left: 4px solid #667eea;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.taskbar-event-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateX(5px);
+}
+
+.taskbar-event-item.completed {
+    opacity: 0.6;
+    border-left-color: #28a745;
+}
+
+.taskbar-event-item.completed .event-title {
+    text-decoration: line-through;
+}
+
+.taskbar-event-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+/* event list */
+.event-list {
+    margin-top: 20px;
+}
+
+.event-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.event-item:hover {
+    background: #e9ecef;
+}
+
+.event-item.completed .event-details {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-time {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.event-title {
+    color: #333;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        gap: 5px;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .calendar-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .event-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .event-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

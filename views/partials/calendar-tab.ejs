@@ -1,0 +1,23 @@
+<div id="calendar" class="tab-content">
+    <div class="chat-container">
+        <div class="calendar-header">
+            <h2>📅 Event Calendar</h2>
+            <div>
+                <button class="btn btn-secondary" id="prevMonthBtn">◀ Prev</button>
+                <span id="currentMonth" style="margin: 0 15px; font-weight: 600;"></span>
+                <button class="btn btn-secondary" id="nextMonthBtn">Next ▶</button>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+            <div class="calendar-container">
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+            <div class="day-taskbar" id="dayTaskbar" style="background: #f8f9fa; padding: 20px; border-radius: 10px; min-height: 300px;">
+                <div style="font-weight: bold; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea;">
+                    Select a day
+                </div>
+                <p style="text-align: center; color: #999;">Click on a day to see events</p>
+            </div>
+        </div>
+    </div>
+</div>

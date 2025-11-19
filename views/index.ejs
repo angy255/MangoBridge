@@ -3,99 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <!-- link to CSS in public folder -->
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Multilingual Team Chat</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/messages.css">
+    <link rel="stylesheet" href="/css/calendar.css">
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌍</text></svg>">
 </head>
 <body>
-    <!-- main container -->
+    <%- include('partials/navbar') %>
+
     <div class="container">
-        <!-- header section with title and description -->
-        <div class="header">
-            <h1>🌍 <%= title %></h1>
-            <p>Communicate naturally across languages with AI-powered cultural context</p>
-            <div class="badges">
-                <span class="badge badge-success">AI-Powered</span>
-                <span class="badge badge-info">Context-Aware</span>
-                <% if (nodeEnv === 'development') { %>
-                    <span class="badge" style="background: #ffc107;">Development Mode</span>
-                <% } %>
-            </div>
-        </div>
+        <%- include('partials/home-tab') %>
+        <%- include('partials/unread-tab') %>
+        <%- include('partials/archived-tab') %>
+        <%- include('partials/calendar-tab') %>
+        <%- include('partials/meetings-tab') %>
+    </div>
 
-        <!-- main chat container -->
-        <div class="chat-container">
-            <!-- chat header with clear all button -->
-            <div class="chat-header">
-                <h2>Team Messages</h2>
-                <button class="btn btn-danger" onclick="clearAllMessages()">
-                    🗑️ Clear All
+    <!-- Event Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Events for <span id="modalDate"></span></h3>
+                <button class="close-modal" onclick="closeEventModal()">×</button>
+            </div>
+
+            <form id="eventForm">
+                <div class="form-group">
+                    <label class="form-label">Event Title</label>
+                    <input type="text" class="form-input" id="eventTitle" placeholder="Enter event title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Time</label>
+                    <input type="time" class="form-input" id="eventTime" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    ➕ Add Event
                 </button>
-            </div>
+            </form>
 
-            <!--mMessage list section -->
-            <div class="message-list" id="messageList">
-                <!-- messages go here -->
-                </div>
-
-                <!-- empty state shown when no messages, outside messageList -->
-                <div class="empty-state" id="emptyState" style="display: none;">
-                    <div class="empty-state-icon">💬</div>
-                    <h3>No messages yet</h3>
-                    <p>Start a conversation with your team!</p>
-                </div>
-
-            <!-- loading indicator shown during translation -->
-            <div class="loading" id="loadingIndicator">
-                <div class="spinner"></div>
-                <p class="loading-text">AI is translating with cultural context...</p>
-            </div>
-
-            <!-- message form container -->
-            <div class="form-container">
-                <form id="messageForm">
-                    <!-- First row: Name and language selectors -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Your Name</label>
-                            <input type="text" class="form-input" id="userName" required placeholder="Enter your name">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Source Language</label>
-                            <select class="form-select" id="sourceLang" required>
-                                <option value="en">English</option>
-                                <option value="es">Spanish</option>
-                                <option value="fr">French</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Translate To</label>
-                            <select class="form-select" id="targetLang" required>
-                                <option value="es">Spanish</option>
-                                <option value="fr">French</option>
-                                <option value="en">English</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Second row: Message text area -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Message</label>
-                            <textarea class="form-textarea" id="messageText" required placeholder="Type your message... (Try idioms like 'I'm in a pickle' or 'break a leg')"></textarea>
-                        </div>
-                    </div>
-                    
-                    <!-- submit button -->
-                    <button type="submit" class="btn btn-primary">
-                        ✉️ Send Message
-                    </button>
-                </form>
-            </div>
+            <div class="event-list" id="eventList"></div>
         </div>
     </div>
 
-    <!-- link to JavaScript in public folder -->
+    <script>
+        const currentUser = <%- JSON.stringify(user) %>;
+    </script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/messages.js"></script>
+    <script src="/js/calendar.js"></script>
+    <script src="/js/meetings.js"></script>
     <script src="/js/app.js"></script>
 </body>
 </html>
