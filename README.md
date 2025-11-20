@@ -5,7 +5,7 @@ Translate messages between 10+ languages while preserving cultural context and i
 
 ⚠️ Work in Progress: This application is currently under active development. Features and functionality are being continuously improved and expanded.
 
----
+<!-- ---
 
 ## ✨ Features
 
@@ -70,4 +70,4 @@ Translate messages between 10+ languages while preserving cultural context and i
 - 🤝 Team collaboration — Multiple team rooms and channels
 
 ## 🎨 Credits
-- Inspiration — The need for better multilingual team collaboration
+- Inspiration — The need for better multilingual team collaboration -->
