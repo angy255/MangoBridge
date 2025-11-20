@@ -142,63 +142,14 @@ function toggleEditTranscript() {
     }
 }
 
-// Preview translation button
-let previewTranslationBtn = document.getElementById('previewTranslationBtn');
-if (previewTranslationBtn) {
-    previewTranslationBtn.addEventListener('click', previewTranslation);
-}
 
-// Preview translation
-async function previewTranslation() {
-    const transcript = document.getElementById('meetingTranscript').textContent;
-    const sourceLang = document.getElementById('meetingSourceLang').value;
-    const targetLang = document.getElementById('meetingTargetLang').value;
-    
-    if (!transcript || transcript.includes('Transcript will appear')) {
-        showNotification('No transcript to preview', 'error');
-        return;
-    }
-    
-    showNotification('Generating translation preview...', 'success');
-    
-    try {
-        const response = await fetch(`${API_MEETINGS_URL}/translate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                text: transcript,
-                sourceLang: sourceLang,
-                targetLang: targetLang
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            const previewBox = document.getElementById('translationPreviewBox');
-            const previewContent = document.getElementById('translationPreviewContent');
-            
-            previewContent.innerHTML = `
-                <strong>Translation Preview (${getLanguageName(targetLang)}):</strong><br><br>
-                ${escapeHtml(data.translation)}
-            `;
-            
-            previewBox.style.display = 'block';
-            showNotification('Translation preview generated!', 'success');
-        }
-    } catch (error) {
-        console.error('Translation preview error:', error);
-        showNotification('Failed to generate translation preview', 'error');
-    }
-}
-
-// Translate transcript button
+// translate transcript button
 let translateTranscriptBtn = document.getElementById('translateTranscriptBtn');
 if (translateTranscriptBtn) {
     translateTranscriptBtn.addEventListener('click', translateMeetingTranscript);
 }
 
-// Translate meeting transcript
+// translate meeting transcript
 async function translateMeetingTranscript() {
     const transcript = document.getElementById('meetingTranscript').textContent;
     const sourceLang = document.getElementById('meetingSourceLang').value;
@@ -237,13 +188,13 @@ async function translateMeetingTranscript() {
     }
 }
 
-// Summarize button
+// summarize button
 let summarizeBtn = document.getElementById('summarizeBtn');
 if (summarizeBtn) {
     summarizeBtn.addEventListener('click', summarizeMeeting);
 }
 
-// Summarize meeting
+// summarize meeting
 async function summarizeMeeting() {
     const transcript = document.getElementById('meetingTranscript').textContent;
     
@@ -279,7 +230,7 @@ async function summarizeMeeting() {
     }
 }
 
-// Format summary for display
+// format summary for display
 function formatSummary(summary) {
     return summary
         .split('\n')
@@ -300,7 +251,7 @@ function formatSummary(summary) {
         .join('');
 }
 
-// Get language name
+// get language name
 function getLanguageName(code) {
     const names = {
         en: 'English', es: 'Spanish', fr: 'French', de: 'German',

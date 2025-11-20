@@ -23,19 +23,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// request logging
+// request logging (with more detail for debugging)
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
-// mongoDB connection 
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log('✅ MongoDB connected successfully'))
-.catch((err) => {
-  console.error('❌ MongoDB connection error:', err);
-  process.exit(1);
-});
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // session configuration
 app.use(session({
@@ -68,6 +68,12 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/meetings', meetingRoutes);
 
+// log registered routes for debugging
+console.log('📋 Registered API routes:');
+console.log('   - /api/messages');
+console.log('   - /api/calendar');
+console.log('   - /api/meetings');
+
 // main route
 app.get('/', (req, res) => {
   if (req.isAuthenticated()) {
@@ -91,7 +97,8 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    deepgramConfigured: !!process.env.DEEPGRAM_API_KEY
   });
 });
 
@@ -107,9 +114,11 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
+  // console.log(`❌ 404 - Route not found: ${req.method} ${req.path}`);
   res.status(404).json({
     success: false,
-    error: 'Route not found'
+    error: 'Route not found',
+    path: req.path
   });
 });
 
@@ -118,6 +127,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Go to: http://localhost:${PORT}`);
+  console.log(`🔑 Deepgram API Key: ${process.env.DEEPGRAM_API_KEY ? 'Configured ✓' : 'Missing ✗'}`);
 });
 
 module.exports = app;
