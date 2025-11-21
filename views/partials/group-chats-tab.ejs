@@ -1,0 +1,168 @@
+<div id="unread" class="tab-content">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>📬 Group Chats</h2>
+            <button class="btn btn-success" id="markAllReadBtn" onclick="markAllAsRead()">
+                ✓ Mark All as Read
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
+            <!-- Chat Groups Sidebar -->
+            <div class="chat-groups-sidebar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: #667eea; font-size: 18px; margin: 0;">📁 Chat Groups</h3>
+                    <button class="btn btn-primary btn-small" onclick="createNewGroup()" title="Create New Group">
+                        ➕
+                    </button>
+                </div>
+                <div id="chatGroupsList"></div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="messages-area">
+                <!-- Selected Group Info -->
+                <div id="selectedGroupInfo" style="display: none;">
+                    <div>
+                        <div>
+                            <h4 id="selectedGroupName"></h4>
+                            <p id="selectedGroupMembers"></p>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-small" onclick="manageGroupMembers()">
+                                👥 Manage Members
+                            </button>
+                            <button class="btn btn-info btn-small" onclick="createGroupChat()">
+                                💬 New Message
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteCurrentGroup()">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Messages -->
+                <div class="group-messages-section">
+                    <!-- New Message Form (shows at top) -->
+                    <div id="newMessageForm" style="display: none; margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <h4 style="margin-bottom: 15px; color: #667eea;">✍️ New Message</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Your Language</label>
+                                <select class="form-select" id="groupSourceLang">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="it">Italian</option>
+                                    <option value="nl">Dutch</option>
+                                    <option value="pl">Polish</option>
+                                    <option value="ru">Russian</option>
+                                    <option value="ko">Korean</option>
+                                    <option value="tr">Turkish</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Translate To</label>
+                                <select class="form-select" id="groupTargetLang">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="it">Italian</option>
+                                    <option value="nl">Dutch</option>
+                                    <option value="pl">Polish</option>
+                                    <option value="ru">Russian</option>
+                                    <option value="ko">Korean</option>
+                                    <option value="tr">Turkish</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea id="groupMessageText" class="form-textarea" placeholder="Type your message..." style="min-height: 100px;"></textarea>
+                        </div>
+                        <div id="groupTranslationPreview" class="translation-preview">
+                            <div class="preview-header">📋 Translation Preview:</div>
+                            <div class="preview-content" id="groupPreviewContent"></div>
+                        </div>
+                        <div class="button-row" style="margin-top: 15px;">
+                            <button class="btn btn-info" onclick="previewGroupTranslation()">👁️ Preview Translation</button>
+                            <button class="btn btn-secondary" id="groupMicButton" onclick="toggleGroupRecording()">🎤 Record</button>
+                            <button class="btn btn-primary" onclick="sendGroupMessage()">📤 Send</button>
+                            <button class="btn btn-secondary" onclick="hideNewMessageForm()">✖ Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Messages List (most recent first) -->
+                    <div class="message-list scrollable" id="groupMessagesList" style="max-height: 600px; margin-top: 20px;"></div>
+                    <div class="empty-state" id="groupEmptyState" style="display: none;">
+                        <div class="empty-state-icon">💬</div>
+                        <h3>No messages yet</h3>
+                        <p>Start a conversation in this group!</p>
+                    </div>
+
+                    <!-- New Message Button (shows when form is hidden) -->
+                    <div id="newMessageBtn" style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="showNewMessageForm()">
+                            ✉️ Send New Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Group Modal -->
+<div class="modal" id="createGroupModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>➕ Create New Group</h3>
+            <button class="close-modal" onclick="closeCreateGroupModal()">×</button>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Group Name</label>
+            <input type="text" class="form-input" id="newGroupName" placeholder="Enter group name" required>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px;">Select Members</h4>
+            <div id="newGroupUsersList"></div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="saveNewGroup()" style="width: 100%;">
+                ✓ Create Group
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Members Modal -->
+<div class="modal" id="manageMembersModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>👥 Manage Group Members</h3>
+            <button class="close-modal" onclick="closeMembersModal()">×</button>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px;">Current Members</h4>
+            <div id="currentMembersList"></div>
+        </div>
+
+        <div>
+            <h4 style="margin-bottom: 10px;">Add Members</h4>
+            <div id="availableUsersList"></div>
+        </div>
+    </div>
+</div>

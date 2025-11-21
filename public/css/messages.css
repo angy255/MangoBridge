@@ -36,8 +36,12 @@
     padding: 20px;
     margin-bottom: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
     position: relative;
+}
+
+body.dark-mode .message-card {
+    background: var(--card-bg);
 }
 
 .message-card:hover {
@@ -50,8 +54,13 @@
 }
 
 .message-card.selected {
-    background: #fff3cd;
-    border: 2px solid #ffc107;
+    border: 2px solid #667eea;
+    background: #f0f7ff;
+}
+
+body.dark-mode .message-card.selected {
+    border: 2px solid #667eea;
+    background: rgba(102, 126, 234, 0.15);
 }
 
 /* reply card styles */
@@ -61,6 +70,10 @@
     margin-left: 40px;
     margin-top: 10px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode .reply-card {
+    background: rgba(102, 126, 234, 0.1);
 }
 
 .reply-card:hover {
@@ -83,18 +96,23 @@
     border: 2px solid #2196f3;
 }
 
+body.dark-mode .reply-form {
+    background: rgba(33, 150, 243, 0.15);
+    border-color: #2196f3;
+}
+
 .reply-form h4 {
     color: #667eea;
     margin-bottom: 15px;
 }
 
 .message-checkbox {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
+    accent-color: #667eea;
+    margin-top: 2px;
+    flex-shrink: 0;
 }
 
 .message-header {
@@ -245,13 +263,6 @@ body.dark-mode .preview-content {
 
     .message-actions .btn {
         width: 100%;
-    }
-
-    .message-checkbox {
-        top: 10px;
-        right: 10px;
-        width: 18px;
-        height: 18px;
     }
 
     .reply-card {

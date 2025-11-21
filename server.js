@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// request logging (with more detail for debugging)
+// request logging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
@@ -43,7 +43,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    maxAge: 1000 * 60 * 60 * 24,
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true
   }
@@ -61,18 +61,24 @@ const authRoutes = require('./routes/auth');
 const messageRoutes = require('./routes/messages');
 const calendarRoutes = require('./routes/calendar');
 const meetingRoutes = require('./routes/meetings');
+const chatGroupRoutes = require('./routes/chatGroups');
+const userRoutes = require('./routes/users');
 
 // use routes
 app.use('/', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/meetings', meetingRoutes);
+app.use('/api/chatgroups', chatGroupRoutes);
+app.use('/api/users', userRoutes);
 
-// log registered routes for debugging
+// log registered routes
 console.log('📋 Registered API routes:');
 console.log('   - /api/messages');
 console.log('   - /api/calendar');
 console.log('   - /api/meetings');
+console.log('   - /api/chatgroups');
+console.log('   - /api/users');
 
 // main route
 app.get('/', (req, res) => {
@@ -114,7 +120,6 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  // console.log(`❌ 404 - Route not found: ${req.method} ${req.path}`);
   res.status(404).json({
     success: false,
     error: 'Route not found',

@@ -1,10 +1,12 @@
 // meeting recording and summarization
-// use api here?
 const API_MEETINGS_URL = '/api/meetings';
 let meetingRecorder = null;
 let meetingAudioChunks = [];
 let isMeetingRecording = false;
 let isTranscriptEditing = false;
+let currentTranscript = '';
+let currentTranslation = '';
+let currentSummary = '';
 
 // meeting record button
 let meetingRecordBtn = document.getElementById('meetingRecordBtn');
@@ -12,7 +14,6 @@ if (meetingRecordBtn) {
     meetingRecordBtn.addEventListener('click', toggleMeetingRecording);
 }
 
-// toggle meeting recording
 async function toggleMeetingRecording() {
     if (isMeetingRecording) {
         stopMeetingRecording();
@@ -21,7 +22,6 @@ async function toggleMeetingRecording() {
     }
 }
 
-// start meeting recording
 async function startMeetingRecording() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -54,7 +54,6 @@ async function startMeetingRecording() {
     }
 }
 
-// stop meeting recording
 function stopMeetingRecording() {
     if (meetingRecorder && isMeetingRecording) {
         meetingRecorder.stop();
@@ -68,7 +67,6 @@ function stopMeetingRecording() {
     }
 }
 
-// transcribe meeting
 async function transcribeMeeting(audioBlob) {
     const language = document.getElementById('meetingSourceLang').value;
     
@@ -87,10 +85,15 @@ async function transcribeMeeting(audioBlob) {
         const data = await response.json();
         
         if (data.success) {
+            currentTranscript = data.transcript;
             const transcriptDiv = document.getElementById('meetingTranscript');
             transcriptDiv.textContent = data.transcript;
             transcriptDiv.setAttribute('data-original', data.transcript);
+            
+            // Show buttons
             showEditButton();
+            document.getElementById('transcriptActions').style.display = 'flex';
+            
             showNotification('Meeting transcribed successfully!', 'success');
         } else {
             showNotification(data.error || 'Transcription failed', 'error');
@@ -101,7 +104,6 @@ async function transcribeMeeting(audioBlob) {
     }
 }
 
-// show edit button
 function showEditButton() {
     const editBtnContainer = document.getElementById('editTranscriptBtnContainer');
     if (editBtnContainer) {
@@ -109,21 +111,19 @@ function showEditButton() {
     }
 }
 
-// Edit transcript button
 let editTranscriptBtn = document.getElementById('editTranscriptBtn');
 if (editTranscriptBtn) {
     editTranscriptBtn.addEventListener('click', toggleEditTranscript);
 }
 
-// Toggle edit transcript
 function toggleEditTranscript() {
     const transcriptDiv = document.getElementById('meetingTranscript');
     const editBtn = document.getElementById('editTranscriptBtn');
     
     if (isTranscriptEditing) {
-        // Save changes
         const textarea = transcriptDiv.querySelector('textarea');
         if (textarea) {
+            currentTranscript = textarea.value;
             transcriptDiv.textContent = textarea.value;
             transcriptDiv.setAttribute('data-original', textarea.value);
         }
@@ -132,7 +132,6 @@ function toggleEditTranscript() {
         editBtn.classList.remove('btn-success');
         editBtn.classList.add('btn-secondary');
     } else {
-        // Enable editing
         const currentText = transcriptDiv.textContent;
         transcriptDiv.innerHTML = `<textarea style="width: 100%; min-height: 200px; padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-family: inherit; font-size: 14px;">${currentText}</textarea>`;
         isTranscriptEditing = true;
@@ -142,14 +141,11 @@ function toggleEditTranscript() {
     }
 }
 
-
-// translate transcript button
 let translateTranscriptBtn = document.getElementById('translateTranscriptBtn');
 if (translateTranscriptBtn) {
     translateTranscriptBtn.addEventListener('click', translateMeetingTranscript);
 }
 
-// translate meeting transcript
 async function translateMeetingTranscript() {
     const transcript = document.getElementById('meetingTranscript').textContent;
     const sourceLang = document.getElementById('meetingSourceLang').value;
@@ -176,6 +172,7 @@ async function translateMeetingTranscript() {
         const data = await response.json();
         
         if (data.success) {
+            currentTranslation = data.translation;
             document.getElementById('meetingTranscript').innerHTML = `
                 <strong>Translated to ${getLanguageName(targetLang)}:</strong><br><br>
                 ${escapeHtml(data.translation)}
@@ -188,15 +185,14 @@ async function translateMeetingTranscript() {
     }
 }
 
-// summarize button
 let summarizeBtn = document.getElementById('summarizeBtn');
 if (summarizeBtn) {
     summarizeBtn.addEventListener('click', summarizeMeeting);
 }
 
-// summarize meeting
 async function summarizeMeeting() {
-    const transcript = document.getElementById('meetingTranscript').textContent;
+    const transcriptDiv = document.getElementById('meetingTranscript');
+    const transcript = transcriptDiv.textContent;
     
     if (!transcript || transcript.includes('Transcript will appear')) {
         showNotification('No transcript to summarize', 'error');
@@ -215,11 +211,13 @@ async function summarizeMeeting() {
         const data = await response.json();
         
         if (data.success) {
+            currentSummary = data.summary;
             const summaryBox = document.getElementById('meetingSummary');
             const summaryContent = document.getElementById('summaryContent');
             
             summaryContent.innerHTML = formatSummary(data.summary);
             summaryBox.style.display = 'block';
+            
             showNotification('Summary generated successfully!', 'success');
         } else {
             showNotification('Failed to generate summary', 'error');
@@ -230,7 +228,60 @@ async function summarizeMeeting() {
     }
 }
 
-// format summary for display
+let saveSummaryBtn = document.getElementById('saveSummaryBtn');
+if (saveSummaryBtn) {
+    saveSummaryBtn.addEventListener('click', saveMeetingSummary);
+}
+
+async function saveMeetingSummary() {
+    const titlePrompt = prompt('Enter a title for this meeting summary:');
+    
+    if (!titlePrompt || titlePrompt.trim() === '') {
+        showNotification('Title is required to save summary', 'error');
+        return;
+    }
+    
+    const sourceLang = document.getElementById('meetingSourceLang').value;
+    const targetLang = document.getElementById('meetingTargetLang').value;
+    
+    try {
+        const response = await fetch(`${API_MEETINGS_URL}/save-summary`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: titlePrompt.trim(),
+                meetingDate: new Date(),
+                transcript: currentTranscript,
+                translatedTranscript: currentTranslation,
+                summary: currentSummary,
+                sourceLang: sourceLang,
+                targetLang: targetLang
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Meeting summary saved successfully! View it in the Meeting Summaries tab.', 'success');
+            
+            // Reset the form
+            document.getElementById('meetingTranscript').innerHTML = '<p style="color: #999;">Transcript will appear here after recording...</p>';
+            document.getElementById('meetingSummary').style.display = 'none';
+            document.getElementById('editTranscriptBtnContainer').style.display = 'none';
+            document.getElementById('transcriptActions').style.display = 'none';
+            
+            currentTranscript = '';
+            currentTranslation = '';
+            currentSummary = '';
+        } else {
+            showNotification(data.error || 'Failed to save summary', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving summary:', error);
+        showNotification('Failed to save summary', 'error');
+    }
+}
+
 function formatSummary(summary) {
     return summary
         .split('\n')
@@ -251,7 +302,6 @@ function formatSummary(summary) {
         .join('');
 }
 
-// get language name
 function getLanguageName(code) {
     const names = {
         en: 'English', es: 'Spanish', fr: 'French', de: 'German',

@@ -1,0 +1,233 @@
+/* group chats styles */
+
+/* member and user items */
+.member-item, 
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background 0.2s ease;
+}
+
+body.dark-mode .member-item,
+body.dark-mode .user-item {
+    background: var(--input-bg);
+}
+
+.member-item:hover, 
+.user-item:hover {
+    background: #e9ecef;
+}
+
+body.dark-mode .member-item:hover,
+body.dark-mode .user-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* user avatar small */
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+/* small buttons */
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+/* group unread badge */
+.group-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+body.dark-mode .group-unread-badge {
+    background: #ff4757;
+}
+
+/* group messages section */
+.group-messages-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* new message form */
+#newMessageForm {
+    order: 1;
+}
+
+/* messages list - below the form */
+#groupMessagesList {
+    order: 2;
+}
+
+#groupEmptyState {
+    order: 2;
+}
+
+/* new message button */
+#newMessageBtn {
+    order: 3;
+}
+
+/* selected group info */
+#selectedGroupInfo {
+    background: #f0f7ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+body.dark-mode #selectedGroupInfo {
+    background: rgba(102, 126, 234, 0.15);
+}
+
+/* group info layout */
+#selectedGroupInfo > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#selectedGroupInfo > div > div:first-child {
+    flex: 1;
+    min-width: 200px;
+}
+
+#selectedGroupName {
+    margin: 0 0 5px 0;
+    color: #667eea;
+}
+
+body.dark-mode #selectedGroupName {
+    color: #8b9eff;
+}
+
+#selectedGroupMembers {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+}
+
+body.dark-mode #selectedGroupMembers {
+    color: var(--text-secondary);
+}
+
+/* group info action buttons */
+#selectedGroupInfo .btn {
+    white-space: nowrap;
+}
+
+/* modal lists */
+#newGroupUsersList,
+#currentMembersList,
+#availableUsersList {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#currentMembersList {
+    max-height: 200px;
+}
+
+#availableUsersList {
+    max-height: 250px;
+}
+
+/* scrollbar for lists */
+#newGroupUsersList::-webkit-scrollbar,
+#currentMembersList::-webkit-scrollbar,
+#availableUsersList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#newGroupUsersList::-webkit-scrollbar-track,
+#currentMembersList::-webkit-scrollbar-track,
+#availableUsersList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+body.dark-mode #newGroupUsersList::-webkit-scrollbar-track,
+body.dark-mode #currentMembersList::-webkit-scrollbar-track,
+body.dark-mode #availableUsersList::-webkit-scrollbar-track {
+    background: var(--input-bg);
+}
+
+#newGroupUsersList::-webkit-scrollbar-thumb,
+#currentMembersList::-webkit-scrollbar-thumb,
+#availableUsersList::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+#newGroupUsersList::-webkit-scrollbar-thumb:hover,
+#currentMembersList::-webkit-scrollbar-thumb:hover,
+#availableUsersList::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
+}
+
+/* responsive design */
+@media (max-width: 768px) {
+    #selectedGroupInfo > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    #selectedGroupInfo > div > div:last-child {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    
+    #selectedGroupInfo .btn {
+        width: 100%;
+    }
+    
+    .member-item,
+    .user-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .member-item > div:last-child,
+    .user-item > div:last-child {
+        width: 100%;
+    }
+    
+    .member-item button,
+    .user-item button {
+        width: 100%;
+    }
+}

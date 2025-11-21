@@ -41,6 +41,16 @@ const messageSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  archivedBy: {
+    type: Map,
+    of: Boolean,
+    default: {}
+  },
+  readBy: {
+    type: Map,
+    of: Boolean,
+    default: {}
+  },
   parentMessageId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
