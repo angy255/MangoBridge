@@ -43,17 +43,17 @@ function renderMeetingSummaries(summaries) {
             <div class="summary-header">
                 <h3>${escapeHtml(summary.title)}</h3>
                 <button class="icon-btn" onclick="deleteMeetingSummary('${summary._id}')" title="Delete summary">
-                    🗑️
+                    Delete
                 </button>
             </div>
             <div class="summary-meta">
-                <span>📅 Meeting: ${new Date(summary.meetingDate).toLocaleDateString('en-US', { 
+                <span>Meeting: ${new Date(summary.meetingDate).toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                 })}</span>
-                <span>🕒 Generated: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
+                <span>Generated: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
                     month: 'short', 
                     day: 'numeric', 
                     year: 'numeric',
@@ -67,7 +67,7 @@ function renderMeetingSummaries(summaries) {
             ${summary.transcript ? `
                 <details style="margin-top: 15px;">
                     <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: #f0f7ff; border-radius: 5px;">
-                        📝 View Full Transcript
+                        View Full Transcript
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">
                         ${escapeHtml(summary.transcript)}
@@ -77,7 +77,7 @@ function renderMeetingSummaries(summaries) {
             ${summary.translatedTranscript ? `
                 <details style="margin-top: 10px;">
                     <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: #e3f2fd; border-radius: 5px;">
-                        🌐 View Translation
+                        View Translation
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">
                         ${escapeHtml(summary.translatedTranscript)}

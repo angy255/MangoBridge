@@ -151,9 +151,9 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
                 ` : escapeHtml(msg.originalText)}
             </div>
             <div class="translation">
-                <div class="translation-label">🌐 Translated to ${languageNames[msg.targetLang]}</div>
+                <div class="translation-label">Translated to ${languageNames[msg.targetLang]}</div>
                 <div class="translation-text">${escapeHtml(msg.translatedText)}</div>
-                ${msg.aiNote ? `<div class="ai-note">🤖 ${escapeHtml(msg.aiNote)}</div>` : ''}
+                ${msg.aiNote ? `<div class="ai-note">${escapeHtml(msg.aiNote)}</div>` : ''}
             </div>
             ${markAsReadBtn && !isReplying ? `
                 <div class="message-actions">
@@ -163,27 +163,27 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
             ${showActions && isOwnMessage && !isReplying ? `
                 <div class="message-actions">
                     ${isEditing ? `
-                        <button class="btn btn-success" onclick="saveMessageEdit('${msg._id}')">💾 Save</button>
-                        <button class="btn btn-secondary" onclick="cancelMessageEdit()">✖ Cancel</button>
+                        <button class="btn btn-success" onclick="saveMessageEdit('${msg._id}')">Save</button>
+                        <button class="btn btn-secondary" onclick="cancelMessageEdit()">Cancel</button>
                     ` : `
-                        <button class="btn btn-secondary" onclick="editMessage('${msg._id}')">✏️ Edit</button>
+                        <button class="btn btn-secondary" onclick="editMessage('${msg._id}')">Edit</button>
                     `}
-                    <button class="btn btn-danger" onclick="deleteMessage('${msg._id}')">🗑️ Delete</button>
+                    <button class="btn btn-danger" onclick="deleteMessage('${msg._id}')">Delete</button>
                 </div>
             ` : ''}
             ${isArchived && isOwnMessage ? `
                 <div class="message-actions">
-                    <button class="btn btn-danger" onclick="deleteArchivedMessage('${msg._id}')">🗑️ Delete</button>
+                    <button class="btn btn-danger" onclick="deleteArchivedMessage('${msg._id}')">Delete</button>
                 </div>
             ` : ''}
             ${showReply && !isOwnMessage && !isReplying ? `
                 <div class="message-actions">
-                    <button class="btn btn-primary" onclick="replyToMessage('${msg._id}')">💬 Reply</button>
+                    <button class="btn btn-primary" onclick="replyToMessage('${msg._id}')">Reply</button>
                 </div>
             ` : ''}
             ${isReplying ? `
                 <div class="reply-form" id="reply-form-${msg._id}">
-                    <h4 style="margin-bottom: 15px; color: #667eea;">✍️ Writing Reply</h4>
+                    <h4 style="margin-bottom: 15px; color: #667eea;">Writing Reply</h4>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Your Language</label>
@@ -228,9 +228,9 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
                     </div>
                     <div id="reply-preview-${msg._id}" class="translation-preview"></div>
                     <div class="button-row" style="margin-top: 15px;">
-                        <button class="btn btn-info" onclick="previewReply('${msg._id}')">👁️ Preview Translation</button>
-                        <button class="btn btn-primary" onclick="submitReply('${msg._id}')">📤 Send Reply</button>
-                        <button class="btn btn-secondary" onclick="cancelReply()">✖ Cancel</button>
+                        <button class="btn btn-info" onclick="previewReply('${msg._id}')">Preview Translation</button>
+                        <button class="btn btn-primary" onclick="submitReply('${msg._id}')">Send Reply</button>
+                        <button class="btn btn-secondary" onclick="cancelReply()">Cancel</button>
                     </div>
                 </div>
             ` : ''}
@@ -407,7 +407,7 @@ async function previewReply(parentId) {
         if (data.success) {
             const preview = document.getElementById(`reply-preview-${parentId}`);
             preview.innerHTML = `
-                <div class="preview-header">📋 Translation Preview:</div>
+                <div class="preview-header">Translation Preview:</div>
                 <div class="preview-content">
                     <div style="margin-bottom: 10px;">
                         <strong>Original (${languageNames[sourceLang]}):</strong><br>
@@ -661,7 +661,7 @@ if (messageForm) {
             });
             
             const data = await response.json();
-            
+            // getting our pop ups to show
             if (data.success) {
                 messageForm.reset();
                 document.getElementById('translationPreview').classList.remove('active');
@@ -715,7 +715,7 @@ async function startRecording() {
         isRecording = true;
         
         const btn = document.getElementById('micButton');
-        btn.innerHTML = '⏹️ Stop Recording';
+        btn.innerHTML = 'Stop Recording';
         btn.classList.remove('btn-secondary');
         btn.classList.add('btn-danger');
         btn.style.animation = 'pulse 1.5s infinite';
@@ -731,7 +731,7 @@ function stopRecording() {
         isRecording = false;
         
         const btn = document.getElementById('micButton');
-        btn.innerHTML = '🎤 Record';
+        btn.innerHTML = 'Record';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-secondary');
         btn.style.animation = 'none';

@@ -42,7 +42,7 @@ async function startMeetingRecording() {
         isMeetingRecording = true;
         
         const btn = document.getElementById('meetingRecordBtn');
-        btn.innerHTML = '⏹️ Stop Recording';
+        btn.innerHTML = 'Stop Recording';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-warning');
         btn.style.animation = 'pulse 1.5s infinite';
@@ -60,7 +60,7 @@ function stopMeetingRecording() {
         isMeetingRecording = false;
         
         const btn = document.getElementById('meetingRecordBtn');
-        btn.innerHTML = '🎤 Start Recording';
+        btn.innerHTML = 'Start Recording';
         btn.classList.remove('btn-warning');
         btn.classList.add('btn-danger');
         btn.style.animation = 'none';

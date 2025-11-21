@@ -142,12 +142,12 @@ body {
     background: #e0a800;
 }
 
-.btn-danger {
+.btn-danger, button.icon-btn {
     background: #dc3545;
     color: white;
 }
 
-.btn-danger:hover {
+.btn-danger:hover, button.icon-btn:hover {
     background: #c82333;
 }
 

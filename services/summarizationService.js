@@ -41,7 +41,7 @@ async function summarizeText(text, language = 'en') {
       if (sentiments.average) {
         const sentiment = sentiments.average.sentiment || 'neutral';
         const score = sentiments.average.sentiment_score || 0;
-        formattedSummary += `**Overall Sentiment:** ${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)} (Score: ${score.toFixed(2)})\n\n`;
+        formattedSummary += `**Overall Sentiment:** ${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}\n\n`;
       }
     }
      

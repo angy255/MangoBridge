@@ -14,7 +14,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
-                <div class="nav-brand">🌍 Team Chat</div>
+                <div class="nav-brand">Team Chat</div>
             </div>
             <div class="nav-right">
                 <a href="/" class="btn btn-secondary">← Back to Chat</a>
@@ -26,7 +26,7 @@
     <div class="container">
         <div class="profile-container">
             <div class="profile-header">
-                <h1>👤 My Profile</h1>
+                <h1>My Profile</h1>
                 <p>Manage your profile settings</p>
             </div>
 
@@ -54,7 +54,7 @@
                         </div>
                         <div class="avatar-upload">
                             <button type="button" class="btn btn-primary" id="uploadWidgetBtn">
-                                📷 Upload from Cloudinary Widget
+                                Upload from Cloudinary Widget
                             </button>
                             <p class="help-text">Or upload from file (max 200KB):</p>
                             <input type="file" name="avatar" id="avatarFile" accept="image/*" class="file-input">
@@ -113,17 +113,17 @@
                     <div class="theme-toggle">
                         <label class="toggle-option">
                             <input type="radio" name="theme" value="light" <%= !user.theme || user.theme === 'light' ? 'checked' : '' %> onchange="toggleDarkMode(false)">
-                            <span>☀️ Light Mode</span>
+                            <span>Light Mode</span>
                         </label>
                         <label class="toggle-option">
                             <input type="radio" name="theme" value="dark" <%= user.theme === 'dark' ? 'checked' : '' %> onchange="toggleDarkMode(true)">
-                            <span>🌙 Dark Mode</span>
+                            <span>Dark Mode</span>
                         </label>
                     </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-large">
-                    💾 Save Changes
+                    Save Changes
                 </button>
             </form>
         </div>

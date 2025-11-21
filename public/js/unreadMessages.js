@@ -349,13 +349,13 @@ function renderGroupMessages() {
                     <strong>Original:</strong> ${escapeHtml(msg.originalText)}
                 </div>
                 <div class="translation">
-                    <div class="translation-label">🌐 Translated to ${languageNames[msg.targetLang]}</div>
+                    <div class="translation-label">Translated to ${languageNames[msg.targetLang]}</div>
                     <div class="translation-text">${escapeHtml(msg.translatedText)}</div>
-                    ${msg.aiNote ? `<div class="ai-note">🤖 ${escapeHtml(msg.aiNote)}</div>` : ''}
+                    ${msg.aiNote ? `<div class="ai-note"> ${escapeHtml(msg.aiNote)}</div>` : ''}
                 </div>
                 ${isOwnMessage ? `
                     <div class="message-actions">
-                        <button class="btn btn-danger btn-small" onclick="deleteGroupMessage('${msg._id}')">🗑️ Delete</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteGroupMessage('${msg._id}')"> Delete</button>
                     </div>
                 ` : ''}
             </div>
@@ -539,7 +539,7 @@ function stopGroupRecording() {
         isRecordingGroupMessage = false;
         
         const btn = document.getElementById('groupMicButton');
-        btn.innerHTML = '🎤 Record';
+        btn.innerHTML = 'Record';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-secondary');
         btn.style.animation = 'none';

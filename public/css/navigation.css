@@ -116,7 +116,7 @@
     object-fit: cover;
 }
 
-.logout-btn {
+.logout-btn, button.icon-btn {
     padding: 8px 15px;
     background: #dc3545;
     color: white;
