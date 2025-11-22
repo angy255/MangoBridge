@@ -4,7 +4,7 @@ Built to help global teams communicate naturally across languages without losing
 Translate messages between 10+ languages while preserving cultural context and idioms — because "I'm in a pickle" shouldn't become "Estoy en un pepinillo" 🥒
 
 ⚠️ Work in Progress: This application is currently under active development. Features and functionality are being continuously improved and expanded.
-<!-- 
+
 <!-- ---
 
 ## ✨ Features
@@ -70,4 +70,4 @@ Translate messages between 10+ languages while preserving cultural context and i
 - 🤝 Team collaboration — Multiple team rooms and channels
 
 ## 🎨 Credits
-- Inspiration — The need for better multilingual team collaboration --> -->
+- Inspiration — The need for better multilingual team collaboration --> 
