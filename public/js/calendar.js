@@ -1,11 +1,10 @@
 // calendar functionality
-// incorporate an api for the calendar here??
 const API_CALENDAR_URL = '/api/calendar';
 let currentMonth = new Date();
 let selectedDate = null;
 let calendarEvents = [];
 
-// load calendar
+// main load function - called on app initialization
 async function loadCalendar() {
     await loadCalendarEvents();
     renderCalendar();
@@ -111,11 +110,6 @@ function renderCalendar() {
     renderDayTaskbar(today);
 }
 
-// format date key
-function formatDateKey(date) {
-    return date.toISOString().split('T')[0];
-}
-
 // render day taskbar (side panel)
 function renderDayTaskbar(date) {
     const taskbar = document.getElementById('dayTaskbar');
@@ -147,13 +141,13 @@ function renderDayTaskbar(date) {
             <div class="event-title">${escapeHtml(event.title)}</div>
             <div class="taskbar-event-actions">
                 <button class="icon-btn" onclick="toggleEventComplete('${event._id}')" title="${event.completed ? 'Mark incomplete' : 'Mark complete'}">
-                    ${event.completed ? '↩️' : '✓'}
+                    ${event.completed ? 'Undo' : 'Completed'}
                 </button>
                 <button class="icon-btn" onclick="editEvent('${event._id}')" title="Edit event">
-                    ✏️
+                    Edit
                 </button>
                 <button class="icon-btn" onclick="deleteEvent('${event._id}')" title="Delete event">
-                    🗑️
+                    Delete
                 </button>
             </div>
         </div>
@@ -240,15 +234,6 @@ if (eventForm) {
     });
 }
 
-// format time
-function formatTime(time) {
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
-}
-
 // toggle event completion
 async function toggleEventComplete(eventId) {
     try {
@@ -274,58 +259,142 @@ async function toggleEventComplete(eventId) {
     }
 }
 
-// edit event
+// edit event with modal instead of prompt
 async function editEvent(eventId) {
     const event = calendarEvents.find(e => e._id === eventId);
     if (!event) return;
     
-    const newTitle = prompt('Edit event title:', event.title);
-    if (!newTitle || newTitle === event.title) return;
+    // create edit modal
+    const modal = document.createElement('div');
+    modal.className = 'confirm-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2001;
+    `;
     
-    try {
-        const response = await fetch(`${API_CALENDAR_URL}/${eventId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: newTitle })
-        });
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 90%;
+    `;
+    
+    content.innerHTML = `
+        <h3 style="margin-bottom: 20px; color: #667eea;">Edit Event</h3>
+        <input type="text" id="editEventInput" value="${escapeHtml(event.title)}" 
+               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="saveEdit" class="btn btn-primary">Save</button>
+            <button id="cancelEdit" class="btn btn-secondary">Cancel</button>
+        </div>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    document.getElementById('saveEdit').addEventListener('click', async () => {
+        const newTitle = document.getElementById('editEventInput').value.trim();
         
-        const data = await response.json();
-        
-        if (data.success) {
-            await loadCalendarEvents();
-            const today = new Date();
-            renderDayTaskbar(today);
-            renderCalendar();
-            showNotification('Event updated successfully', 'success');
+        if (!newTitle || newTitle === event.title) {
+            modal.remove();
+            return;
         }
-    } catch (error) {
-        console.error('Error updating event:', error);
-        showNotification('Failed to update event', 'error');
-    }
+        
+        try {
+            const response = await fetch(`${API_CALENDAR_URL}/${eventId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: newTitle })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                await loadCalendarEvents();
+                const today = new Date();
+                renderDayTaskbar(today);
+                renderCalendar();
+                showNotification('Event updated successfully', 'success');
+            }
+        } catch (error) {
+            console.error('Error updating event:', error);
+            showNotification('Failed to update event', 'error');
+        }
+        
+        modal.remove();
+    });
+    
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    // focus input
+    setTimeout(() => {
+        const input = document.getElementById('editEventInput');
+        input.focus();
+        input.select();
+    }, 100);
 }
 
-// delete event
 async function deleteEvent(eventId) {
-    if (!confirm('Delete this event?')) return;
-    
-    try {
-        const response = await fetch(`${API_CALENDAR_URL}/${eventId}`, {
-            method: 'DELETE'
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            await loadCalendarEvents();
-            const today = new Date();
-            renderDayTaskbar(today);
-            renderCalendar();
-            showNotification('Event deleted', 'success');
+    showConfirmModal('Delete this event?', async () => {
+        try {
+            const response = await fetch(`${API_CALENDAR_URL}/${eventId}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                await loadCalendarEvents();
+                const today = new Date();
+                renderDayTaskbar(today);
+                renderCalendar();
+                showNotification('Event deleted', 'success');
+            }
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            showNotification('Failed to delete event', 'error');
         }
-    } catch (error) {
-        console.error('Error deleting event:', error);
-        showNotification('Failed to delete event', 'error');
-    }
+    });
+}
+
+// format date key
+function formatDateKey(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// format time
+function formatTime(time) {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+}
+
+// escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // close modal when clicking outside
@@ -337,3 +406,5 @@ if (eventModal) {
         }
     });
 }
+
+console.log('✅ calendar.js loaded successfully');

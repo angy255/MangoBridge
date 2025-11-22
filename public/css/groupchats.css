@@ -1,6 +1,5 @@
 /* group chats styles */
 
-/* member and user items */
 .member-item, 
 .user-item {
     display: flex;
@@ -13,19 +12,9 @@
     transition: background 0.2s ease;
 }
 
-body.dark-mode .member-item,
-body.dark-mode .user-item {
-    background: var(--input-bg);
-}
-
 .member-item:hover, 
 .user-item:hover {
     background: #e9ecef;
-}
-
-body.dark-mode .member-item:hover,
-body.dark-mode .user-item:hover {
-    background: rgba(102, 126, 234, 0.1);
 }
 
 /* user avatar small */
@@ -66,10 +55,6 @@ body.dark-mode .user-item:hover {
     line-height: 1;
 }
 
-body.dark-mode .group-unread-badge {
-    background: #ff4757;
-}
-
 /* group messages section */
 .group-messages-section {
     display: flex;
@@ -104,10 +89,6 @@ body.dark-mode .group-unread-badge {
     border-left: 4px solid #667eea;
 }
 
-body.dark-mode #selectedGroupInfo {
-    background: rgba(102, 126, 234, 0.15);
-}
-
 /* group info layout */
 #selectedGroupInfo > div {
     display: flex;
@@ -127,19 +108,11 @@ body.dark-mode #selectedGroupInfo {
     color: #667eea;
 }
 
-body.dark-mode #selectedGroupName {
-    color: #8b9eff;
-}
-
 #selectedGroupMembers {
     margin: 0;
     font-size: 13px;
     color: #666;
     line-height: 1.6;
-}
-
-body.dark-mode #selectedGroupMembers {
-    color: var(--text-secondary);
 }
 
 /* group info action buttons */
@@ -177,12 +150,6 @@ body.dark-mode #selectedGroupMembers {
     border-radius: 10px;
 }
 
-body.dark-mode #newGroupUsersList::-webkit-scrollbar-track,
-body.dark-mode #currentMembersList::-webkit-scrollbar-track,
-body.dark-mode #availableUsersList::-webkit-scrollbar-track {
-    background: var(--input-bg);
-}
-
 #newGroupUsersList::-webkit-scrollbar-thumb,
 #currentMembersList::-webkit-scrollbar-thumb,
 #availableUsersList::-webkit-scrollbar-thumb {
@@ -194,6 +161,36 @@ body.dark-mode #availableUsersList::-webkit-scrollbar-track {
 #currentMembersList::-webkit-scrollbar-thumb:hover,
 #availableUsersList::-webkit-scrollbar-thumb:hover {
     background: #5568d3;
+}
+
+/* hover effect for user profile links in available users list */
+#availableUsersList .user-item a {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+#availableUsersList .user-item a:hover {
+    color: #667eea !important;
+    text-decoration: underline;
+}
+
+/* hover effect for current members list */
+#currentMembersList .member-item a {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+#currentMembersList .member-item a:hover {
+    color: #667eea !important;
+    text-decoration: underline;
+}
+
+/* hover effect for new group user selection list */
+#newGroupUsersList .user-item label a {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+#newGroupUsersList .user-item label a:hover {
+    color: #667eea !important;
+    text-decoration: underline;
 }
 
 /* responsive design */

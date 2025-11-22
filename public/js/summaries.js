@@ -1,4 +1,5 @@
 // meeting summaries management
+
 // load meeting summaries
 async function loadMeetingSummaries() {
     const API_MEETINGS_URL = '/api/meetings';
@@ -6,15 +7,22 @@ async function loadMeetingSummaries() {
     const emptyState = document.getElementById('summariesEmptyState');
     
     if (!summariesList) {
+        console.error('summariesList element not found');
         return;
     }
     
     try {
+        console.log('Loading meeting summaries...');
         const response = await fetch(`${API_MEETINGS_URL}/summaries`);
         const data = await response.json();
         
+        console.log('Summaries response:', data);
+        
         if (data.success) {
             renderMeetingSummaries(data.data);
+        } else {
+            console.error('Failed to load summaries:', data.error);
+            showNotification('Failed to load summaries', 'error');
         }
     } catch (error) {
         console.error('Error loading summaries:', error);
@@ -28,7 +36,12 @@ function renderMeetingSummaries(summaries) {
     const container = document.getElementById('summariesList');
     const emptyState = document.getElementById('summariesEmptyState');
     
-    if (!container) return;
+    if (!container) {
+        console.error('summariesList container not found');
+        return;
+    }
+    
+    console.log(`Rendering ${summaries.length} summaries`);
     
     if (summaries.length === 0) {
         if (emptyState) emptyState.style.display = 'block';
@@ -42,18 +55,18 @@ function renderMeetingSummaries(summaries) {
         <div class="summary-card" data-id="${summary._id}">
             <div class="summary-header">
                 <h3>${escapeHtml(summary.title)}</h3>
-                <button class="icon-btn" onclick="deleteMeetingSummary('${summary._id}')" title="Delete summary">
+                <button class="btn btn-danger btn-small" onclick="deleteMeetingSummary('${summary._id}')" title="Delete summary">
                     Delete
                 </button>
             </div>
             <div class="summary-meta">
-                <span>Meeting: ${new Date(summary.meetingDate).toLocaleDateString('en-US', { 
+                <span> Meeting: ${new Date(summary.meetingDate).toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                 })}</span>
-                <span>Generated: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
+                <span> Generated: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
                     month: 'short', 
                     day: 'numeric', 
                     year: 'numeric',
@@ -91,23 +104,23 @@ function renderMeetingSummaries(summaries) {
 async function deleteMeetingSummary(id) {
     const API_MEETINGS_URL = '/api/meetings';
     
-    if (!confirm('Delete this meeting summary? This cannot be undone.')) return;
-    
-    try {
-        const response = await fetch(`${API_MEETINGS_URL}/summaries/${id}`, {
-            method: 'DELETE'
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification('Summary deleted successfully', 'success');
-            loadMeetingSummaries();
+    showConfirmModal('Delete this meeting summary? This cannot be undone.', async () => {
+        try {
+            const response = await fetch(`${API_MEETINGS_URL}/summaries/${id}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Summary deleted successfully', 'success');
+                loadMeetingSummaries();
+            }
+        } catch (error) {
+            console.error('Error deleting summary:', error);
+            showNotification('Failed to delete summary', 'error');
         }
-    } catch (error) {
-        console.error('Error deleting summary:', error);
-        showNotification('Failed to delete summary', 'error');
-    }
+    });
 }
 
 function formatSummary(summary) {
@@ -131,3 +144,11 @@ function formatSummary(summary) {
         })
         .join('');
 }
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+console.log('✅ summaries.js loaded successfully');

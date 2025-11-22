@@ -6,10 +6,6 @@
     margin-top: 20px;
 }
 
-body.dark-mode .form-container {
-    background: var(--input-bg);
-}
-
 .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -74,10 +70,6 @@ body.dark-mode .form-container {
     margin-top: 20px;
 }
 
-body.dark-mode .recording-container {
-    background: var(--input-bg);
-}
-
 .recording-controls {
     display: flex;
     gap: 15px;
@@ -95,10 +87,6 @@ body.dark-mode .recording-container {
     color: var(--text-primary);
 }
 
-body.dark-mode .transcript-box {
-    background: var(--input-bg);
-}
-
 .summary-box {
     background: #fff3cd;
     border: 2px solid #ffc107;
@@ -107,18 +95,9 @@ body.dark-mode .transcript-box {
     margin-top: 20px;
 }
 
-body.dark-mode .summary-box {
-    background: #4a3800;
-    border-color: #ffd966;
-}
-
 .summary-box h3 {
     color: #856404;
     margin-bottom: 15px;
-}
-
-body.dark-mode .summary-box h3 {
-    color: #ffd966;
 }
 
 .summary-box ul {
@@ -131,10 +110,6 @@ body.dark-mode .summary-box h3 {
     line-height: 1.6;
 }
 
-body.dark-mode .summary-box li {
-    color: var(--text-primary);
-}
-
 /* reply form specific styling */
 .reply-form {
     background: #e3f2fd;
@@ -142,11 +117,6 @@ body.dark-mode .summary-box li {
     border-radius: 10px;
     margin-top: 15px;
     border: 2px solid #2196f3;
-}
-
-body.dark-mode .reply-form {
-    background: #1a2332;
-    border-color: #667eea;
 }
 
 .reply-form h4 {
@@ -159,11 +129,6 @@ body.dark-mode .reply-form {
     background: white;
 }
 
-body.dark-mode .reply-form .form-select,
-body.dark-mode .reply-form .form-textarea {
-    background: var(--input-bg);
-    border-color: var(--input-border);
-}
 
 @media (max-width: 768px) {
     .form-row {

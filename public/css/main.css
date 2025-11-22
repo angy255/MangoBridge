@@ -19,18 +19,6 @@
     --input-border: #ddd;
 }
 
-body.dark-mode {
-    --bg-gradient-start: #1a1a2e;
-    --bg-gradient-end: #16213e;
-    --card-bg: #0f3460;
-    --text-primary: #e4e4e4;
-    --text-secondary: #b4b4b4;
-    --text-tertiary: #888;
-    --border-color: #1a1a2e;
-    --input-bg: #162447;
-    --input-border: #1f4068;
-}
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
@@ -127,6 +115,7 @@ body {
 .btn-secondary {
     background: #6c757d;
     color: white;
+    text-decoration: none;
 }
 
 .btn-secondary:hover {
@@ -375,8 +364,4 @@ body {
     font-size: 12px;
     font-weight: 600;
     line-height: 1;
-}
-
-.dark-mode .unread-badge {
-    background: #ff4757;
 }

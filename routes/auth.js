@@ -134,17 +134,45 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-// GET Profile page
+// GET Profile page (own profile)
 router.get('/profile', ensureAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     res.render('profile', {
       title: 'Profile',
       user: user,
-      cloudName: process.env.CLOUD_NAME
+      cloudName: process.env.CLOUD_NAME,
+      isOwnProfile: true
     });
   } catch (error) {
     console.error('Error loading profile:', error);
+    res.redirect('/');
+  }
+});
+
+// GET Public profile page (view other users)
+router.get('/profile/:userId', ensureAuth, async (req, res) => {
+  try {
+    const viewedUser = await User.findById(req.params.userId);
+    
+    if (!viewedUser) {
+      req.flash('errors', { msg: 'User not found' });
+      return res.redirect('/');
+    }
+    
+    // Check if viewing own profile
+    const isOwnProfile = req.user._id.toString() === req.params.userId;
+    
+    res.render('profile', {
+      title: `${viewedUser.userName}'s Profile`,
+      user: viewedUser,
+      cloudName: process.env.CLOUD_NAME,
+      isOwnProfile: isOwnProfile,
+      currentUser: req.user
+    });
+  } catch (error) {
+    console.error('Error loading user profile:', error);
+    req.flash('errors', { msg: 'Failed to load profile' });
     res.redirect('/');
   }
 });
@@ -167,7 +195,7 @@ router.post('/profile', ensureAuth, upload.single('avatar'), async (req, res) =>
     // if a file was uploaded, upload to Cloudinary
     if (req.file) {
       try {
-        // Upload image to Cloudinary using buffer
+        // upload image to Cloudinary using buffer
         const result = await new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             {

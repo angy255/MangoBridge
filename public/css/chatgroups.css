@@ -7,10 +7,6 @@
     overflow-y: auto;
 }
 
-body.dark-mode .chat-groups-sidebar {
-    background: var(--input-bg);
-}
-
 .chat-groups-sidebar::-webkit-scrollbar {
     width: 6px;
 }
@@ -34,9 +30,6 @@ body.dark-mode .chat-groups-sidebar {
     transition: all 0.3s ease;
 }
 
-body.dark-mode .chat-group-item {
-    background: var(--card-bg);
-}
 
 .chat-group-item:hover {
     transform: translateX(5px);
@@ -54,10 +47,6 @@ body.dark-mode .chat-group-item {
     border-radius: 10px;
 }
 
-body.dark-mode .messages-area {
-    background: var(--card-bg);
-}
-
 .unread-section .message-card {
     border-left: 4px solid #dc3545;
     animation: slideIn 0.3s ease;
@@ -72,7 +61,7 @@ body.dark-mode .messages-area {
     opacity: 1;
 }
 
-/* Meeting Summaries Styles */
+/* meeting summaries */
 .summaries-container {
     padding: 20px;
 }
@@ -89,10 +78,6 @@ body.dark-mode .messages-area {
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
-}
-
-body.dark-mode .summary-card {
-    background: var(--card-bg);
 }
 
 .summary-card:hover {

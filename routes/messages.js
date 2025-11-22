@@ -5,10 +5,9 @@ const ChatGroup = require('../models/ChatGroup');
 const { requireAuth } = require('../middleware/auth');
 const { translateMessage } = require('../services/translationService');
 
-// Get ALL messages from ALL users (excluding archived AND group messages) - for home feed
 router.get('/all', requireAuth, async (req, res) => {
   try {
-    // Get all group message IDs to exclude them
+    // get all group message IDs to exclude them
     const groups = await ChatGroup.find({});
     const groupMessageIds = new Set();
     groups.forEach(group => {
@@ -17,7 +16,7 @@ router.get('/all', requireAuth, async (req, res) => {
       });
     });
     
-    // Get all messages
+    // get all messages
     const allMessages = await Message.find({})
       .sort({ timestamp: -1 })
       .limit(200);
@@ -220,7 +219,7 @@ router.post('/', requireAuth, async (req, res) => {
   }
 });
 
-// Reply to a message
+// reply to a message
 router.post('/reply', requireAuth, async (req, res) => {
   try {
     const { parentMessageId, originalText, sourceLang, targetLang } = req.body;
@@ -392,26 +391,91 @@ router.post('/archive-thread', requireAuth, async (req, res) => {
   }
 });
 
-// delete message (only own messages)
-router.delete('/:id', requireAuth, async (req, res) => {
-  try {
-    const message = await Message.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user._id
-    });
 
-    if (!message) {
-      return res.status(404).json({
-        success: false,
-        error: 'Message not found or unauthorized'
+router.post('/clear-archived', requireAuth, async (req, res) => {
+  try {
+    console.log(`User ${req.user._id} clearing their archived messages`);
+    
+    // find all messages archived by this user
+    const allMessages = await Message.find({});
+    
+    const archivedMessageIds = allMessages
+      .filter(msg => msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true)
+      .map(msg => msg._id);
+    
+    console.log(`Found ${archivedMessageIds.length} archived messages to unarchive`);
+    
+    if (archivedMessageIds.length === 0) {
+      return res.json({
+        success: true,
+        clearedCount: 0,
+        message: 'No archived messages to clear'
       });
     }
+    
+    const updatePromises = archivedMessageIds.map(messageId =>
+      Message.findByIdAndUpdate(
+        messageId,
+        { $unset: { [`archivedBy.${req.user._id}`]: "" } },
+        { new: true }
+      )
+    );
+    
+    const results = await Promise.allSettled(updatePromises);
+    const clearedCount = results.filter(r => r.status === 'fulfilled').length;
+    
+    console.log(`✓ Cleared ${clearedCount} messages from archived view`);
+    
+    res.json({
+      success: true,
+      clearedCount: clearedCount,
+      message: `Cleared ${clearedCount} archived message(s)`
+    });
+  } catch (error) {
+    console.error('Error clearing archived messages:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to clear archived messages'
+    });
+  }
+});
+
+// delete message (only own messages) - IMPROVED with better 404 handling
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    // first check if message exists
+    const message = await Message.findById(req.params.id);
+    
+    if (!message) {
+      // message doesn't exist - return success for idempotent deletes
+      console.log(`Message ${req.params.id} not found (already deleted)`);
+      return res.status(404).json({
+        success: true, // Changed to true for idempotent deletes
+        message: 'Message not found (may have been already deleted)'
+      });
+    }
+    
+    // check ownership
+    if (message.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: 'Unauthorized to delete this message'
+      });
+    }
+    
+    // delete the message
+    await Message.findByIdAndDelete(req.params.id);
 
     // also delete any replies to this message
     await Message.deleteMany({ parentMessageId: req.params.id });
 
-    res.json({ success: true });
+    console.log(`✓ Message ${req.params.id} deleted successfully`);
+    res.json({ 
+      success: true,
+      message: 'Message deleted successfully'
+    });
   } catch (error) {
+    console.error('Error deleting message:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to delete message'

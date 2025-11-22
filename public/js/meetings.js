@@ -69,9 +69,7 @@ function stopMeetingRecording() {
 
 async function transcribeMeeting(audioBlob) {
     const language = document.getElementById('meetingSourceLang').value;
-    
-    showNotification('Transcribing meeting...', 'success');
-    
+        
     try {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'meeting.webm');
@@ -90,11 +88,10 @@ async function transcribeMeeting(audioBlob) {
             transcriptDiv.textContent = data.transcript;
             transcriptDiv.setAttribute('data-original', data.transcript);
             
-            // Show buttons
+            // show buttons
             showEditButton();
             document.getElementById('transcriptActions').style.display = 'flex';
             
-            showNotification('Meeting transcribed successfully!', 'success');
         } else {
             showNotification(data.error || 'Transcription failed', 'error');
         }
@@ -155,9 +152,7 @@ async function translateMeetingTranscript() {
         showNotification('No transcript to translate', 'error');
         return;
     }
-    
-    showNotification('Translating transcript...', 'success');
-    
+        
     try {
         const response = await fetch(`${API_MEETINGS_URL}/translate`, {
             method: 'POST',
@@ -198,9 +193,7 @@ async function summarizeMeeting() {
         showNotification('No transcript to summarize', 'error');
         return;
     }
-    
-    showNotification('Generating summary with AI...', 'success');
-    
+        
     try {
         const response = await fetch(`${API_MEETINGS_URL}/summarize`, {
             method: 'POST',
@@ -234,52 +227,123 @@ if (saveSummaryBtn) {
 }
 
 async function saveMeetingSummary() {
-    const titlePrompt = prompt('Enter a title for this meeting summary:');
+    //create custom input modal
+    const modal = document.createElement('div');
+    modal.className = 'confirm-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2001;
+    `;
     
-    if (!titlePrompt || titlePrompt.trim() === '') {
-        showNotification('Title is required to save summary', 'error');
-        return;
-    }
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+    `;
     
-    const sourceLang = document.getElementById('meetingSourceLang').value;
-    const targetLang = document.getElementById('meetingTargetLang').value;
+    content.innerHTML = `
+        <h3 style="margin-bottom: 20px; color: #667eea;">Save Meeting Summary</h3>
+        <p style="margin-bottom: 15px; color: #666;">Enter a title for this meeting summary:</p>
+        <input type="text" id="summaryTitleInput" placeholder="e.g., Q4 Planning Meeting" 
+               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="saveSummaryConfirm" class="btn btn-primary">Save</button>
+            <button id="cancelSaveSummary" class="btn btn-secondary">Cancel</button>
+        </div>
+    `;
     
-    try {
-        const response = await fetch(`${API_MEETINGS_URL}/save-summary`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: titlePrompt.trim(),
-                meetingDate: new Date(),
-                transcript: currentTranscript,
-                translatedTranscript: currentTranslation,
-                summary: currentSummary,
-                sourceLang: sourceLang,
-                targetLang: targetLang
-            })
-        });
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+
+    const titleInput = document.getElementById('summaryTitleInput');
+    
+    // focus input
+    setTimeout(() => {
+        titleInput.focus();
+    }, 100);
+    
+    // handle save
+    document.getElementById('saveSummaryConfirm').addEventListener('click', async () => {
+        const title = titleInput.value.trim();
         
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification('Meeting summary saved successfully! View it in the Meeting Summaries tab.', 'success');
-            
-            // Reset the form
-            document.getElementById('meetingTranscript').innerHTML = '<p style="color: #999;">Transcript will appear here after recording...</p>';
-            document.getElementById('meetingSummary').style.display = 'none';
-            document.getElementById('editTranscriptBtnContainer').style.display = 'none';
-            document.getElementById('transcriptActions').style.display = 'none';
-            
-            currentTranscript = '';
-            currentTranslation = '';
-            currentSummary = '';
-        } else {
-            showNotification(data.error || 'Failed to save summary', 'error');
+        if (!title) {
+            showNotification('Title is required to save summary', 'error');
+            return;
         }
-    } catch (error) {
-        console.error('Error saving summary:', error);
-        showNotification('Failed to save summary', 'error');
-    }
+        
+        const sourceLang = document.getElementById('meetingSourceLang').value;
+        const targetLang = document.getElementById('meetingTargetLang').value;
+        
+        try {
+            const response = await fetch(`${API_MEETINGS_URL}/save-summary`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title,
+                    meetingDate: new Date(),
+                    transcript: currentTranscript,
+                    translatedTranscript: currentTranslation,
+                    summary: currentSummary,
+                    sourceLang: sourceLang,
+                    targetLang: targetLang
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Meeting summary saved successfully!', 'success');
+                
+                // reset the form
+                document.getElementById('meetingTranscript').innerHTML = '<p style="color: #999;">Transcript will appear here after recording...</p>';
+                document.getElementById('meetingSummary').style.display = 'none';
+                document.getElementById('editTranscriptBtnContainer').style.display = 'none';
+                document.getElementById('transcriptActions').style.display = 'none';
+                
+                currentTranscript = '';
+                currentTranslation = '';
+                currentSummary = '';
+                
+                modal.remove();
+            } else {
+                showNotification(data.error || 'Failed to save summary', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving summary:', error);
+            showNotification('Failed to save summary', 'error');
+        }
+    });
+    
+    // handle cancel
+    document.getElementById('cancelSaveSummary').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    // close on outside click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    // handle enter key
+    titleInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('saveSummaryConfirm').click();
+        }
+    });
 }
 
 function formatSummary(summary) {
@@ -311,3 +375,11 @@ function getLanguageName(code) {
     };
     return names[code] || code.toUpperCase();
 }
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+console.log('✅ meetings.js loaded successfully');

@@ -1,8 +1,13 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-left">
-            <div class="nav-brand"> Team Chat</div>
-            <div class="nav-links">
+            <div class="nav-brand">Team Chat</div>
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links" id="navLinks">
                 <button class="nav-link active" data-tab="home">
                     Home
                 </button>
@@ -39,3 +44,35 @@
         </div>
     </div>
 </nav>
+
+<script>
+// hamburger menu functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburgerBtn');
+    const navLinks = document.getElementById('navLinks');
+    
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-open');
+        });
+        
+        // close menu when clicking a link
+        const links = navLinks.querySelectorAll('.nav-link');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('mobile-open');
+            });
+        });
+        
+        // close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('mobile-open');
+            }
+        });
+    }
+});
+</script>

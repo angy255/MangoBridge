@@ -47,7 +47,7 @@ async function transcribeAudio(audioBuffer, language = 'en') {
 
   } catch (error) {
     console.error('Transcription error:', error);
-    throw new Error('Transcription service failed');
+    throw new Error('Please select the correct source language');
   }
 }
 
