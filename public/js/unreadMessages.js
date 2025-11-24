@@ -242,8 +242,11 @@ async function createNewGroup() {
     
     document.getElementById('createGroupModal').classList.add('active');
     
+    // filter out current user from member selection
+    const otherUsers = allUsers.filter(user => user._id !== currentUser.id);
+    
     const usersList = document.getElementById('newGroupUsersList');
-    usersList.innerHTML = allUsers.map(user => `
+    usersList.innerHTML = otherUsers.map(user => `
         <div class="user-item">
             <div style="display: flex; align-items: center;">
                 <input type="checkbox" class="user-checkbox" value="${user._id}" id="user-${user._id}">
@@ -322,6 +325,21 @@ async function selectGroup(groupId) {
         
         const memberNames = group.members?.map(m => m.userName || 'Unknown').join(', ') || 'No members';
         membersSpan.innerHTML = `<strong>Members:</strong> ${memberNames}`;
+        
+        // check if current user is the creator to show/hide management buttons
+        const isCreator = group.createdBy.toString() === currentUser.id;
+        const manageBtn = document.querySelector('#selectedGroupInfo button[onclick="manageGroupMembers()"]');
+        const deleteBtn = document.querySelector('#selectedGroupInfo button[onclick="deleteCurrentGroup()"]');
+        
+        if (manageBtn && deleteBtn) {
+            if (isCreator) {
+                manageBtn.style.display = 'inline-block';
+                deleteBtn.style.display = 'inline-block';
+            } else {
+                manageBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            }
+        }
         
         await loadGroupMessages(groupId);
         await markGroupMessagesAsRead(groupId);
@@ -516,8 +534,9 @@ async function manageGroupMembers() {
         </div>
     `).join('');
     
+    // filter out current user from available users list
     const availableUsers = allUsers.filter(u => 
-        !group.members.some(m => m._id === u._id)
+        !group.members.some(m => m._id === u._id) && u._id !== currentUser.id
     );
     
     const availableList = document.getElementById('availableUsersList');
@@ -595,8 +614,16 @@ async function removeMember(userId) {
 }
 
 // close members modal
-function closeMembersModal() {
+async function closeMembersModal() {
     document.getElementById('manageMembersModal').classList.remove('active');
+    
+    // Reload group data to reflect changes
+    await loadChatGroups();
+    
+    // If a group is selected, refresh its view
+    if (selectedGroupId) {
+        await selectGroup(selectedGroupId);
+    }
 }
 
 // delete current group - FIXED VERSION WITH AUTO-REFRESH

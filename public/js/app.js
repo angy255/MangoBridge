@@ -8,10 +8,8 @@ document.addEventListener('DOMContentLoaded', async() => {
         return;
     }
     
-    
     try {
         // initialize group chats badges FIRST (before loading messages)
-        // ensures the unread badge shows immediately on login
         if (typeof initializeGroupChatsBadges === 'function') {
             await initializeGroupChatsBadges();
         } else {
@@ -25,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             console.error('loadMessages function not found');
         }
 
-        // load group chats (will update badges again with more accurate data)
+        // load group chats
         if (typeof loadUnreadMessages === 'function') {
             await loadUnreadMessages(true); // skipRender = true
         } else {
@@ -42,6 +40,9 @@ document.addEventListener('DOMContentLoaded', async() => {
         setupNavigation();
         setupEventListeners();
         
+        // get last active tab from sessionStorage (for refresh persistence)
+        const lastActiveTab = sessionStorage.getItem('activeTab');
+        
         // handle tab navigation from URL or session storage
         const urlParams = new URLSearchParams(window.location.search);
         const tabFromUrl = urlParams.get('tab');
@@ -49,28 +50,18 @@ document.addEventListener('DOMContentLoaded', async() => {
         
         if (tabFromUrl) {
             switchTab(tabFromUrl);
-            // update active nav link
-            document.querySelector
-            // update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-tab') === tabFromUrl) {
-                    link.classList.add('active');
-                }
-            });
+            updateActiveNavLink(tabFromUrl);
             // clear URL parameter
             window.history.replaceState({}, '', window.location.pathname);
         } else if (tabFromSession) {
             switchTab(tabFromSession);
-            // update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-tab') === tabFromSession) {
-                    link.classList.add('active');
-                }
-            });
+            updateActiveNavLink(tabFromSession);
             // clear session storage
             sessionStorage.removeItem('returnTab');
+        } else if (lastActiveTab) {
+            // restore last active tab on page refresh
+            switchTab(lastActiveTab);
+            updateActiveNavLink(lastActiveTab);
         }
 
         console.log('✅ App initialized successfully');
@@ -91,14 +82,23 @@ function setupNavigation() {
         link.addEventListener('click', () => {
             const tab = link.getAttribute('data-tab');
             switchTab(tab);
+            updateActiveNavLink(tab);
             
-            // update active state
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
+            // save active tab to sessionStorage
+            sessionStorage.setItem('activeTab', tab);
         });
     });
     
     console.log('✅ Navigation setup complete');
+}
+
+function updateActiveNavLink(tabName) {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-tab') === tabName) {
+            link.classList.add('active');
+        }
+    });
 }
 
 function switchTab(tabName) {
