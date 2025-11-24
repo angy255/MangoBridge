@@ -12,13 +12,11 @@ const languageNames = {
     nl: 'Dutch', pl: 'Polish', ru: 'Russian', ko: 'Korean', tr: 'Turkish'
 };
 
-// update unread badge - count threads user is part of
+// update unread badge
 function updateUnreadBadge() {
     const badge = document.getElementById('unreadBadge');
     
-    // count unread messages from threads the user is part of
     const unreadCount = unreadMessages.filter(msg => {
-        // message is unread AND user is not the author
         return !msg.isRead && msg.userId !== currentUser.id;
     }).length;
 
@@ -33,7 +31,7 @@ function updateUnreadBadge() {
     }
 }
 
-// load ALL messages from ALL users for home feed
+// load ALL messages from ALL users for home feed (excluding archived)
 async function loadMessages() {
     try {
         console.log('Loading messages...');
@@ -68,7 +66,7 @@ async function loadArchivedMessages() {
     }
 }
 
-// render home messages - ALL users' messages
+// render home messages
 function renderHomeMessages() {
     const container = document.getElementById('homeMessageList');
     const emptyState = document.getElementById('homeEmptyState');
@@ -86,17 +84,14 @@ function renderHomeMessages() {
     
     if (emptyState) emptyState.style.display = 'none';
     
-    // filter out messages that are replies (they'll be shown within parent)
     const parentMessages = messages.filter(msg => !msg.parentMessageId);
     
     container.innerHTML = parentMessages.map(msg => {
-        // get replies for this message
         const replies = messages.filter(r => r.parentMessageId === msg._id);
         
         const isOwnMessage = msg.userId === currentUser.id;
         let html = createMessageCard(msg, true, false, isOwnMessage, true);
         
-        // add replies if any exist - NO CHECKBOXES FOR REPLIES
         if (replies.length > 0) {
             html += '<div class="replies-container">';
             replies.forEach(reply => {
@@ -128,20 +123,19 @@ function renderArchivedMessages(archivedMessages) {
     
     if (emptyState) emptyState.style.display = 'none';
     
-    // filter parent messages only
     const parentMessages = archivedMessages.filter(msg => !msg.parentMessageId);
     
     container.innerHTML = parentMessages.map(msg => {
-        // get replies for this message
         const replies = archivedMessages.filter(r => r.parentMessageId === msg._id);
         
-        let html = createMessageCard(msg, false, false, false, false, true);
+        const isOwnMessage = msg.userId === currentUser.id;
+        let html = createMessageCard(msg, false, false, isOwnMessage, false, true);
         
-        // add replies
         if (replies.length > 0) {
             html += '<div class="replies-container">';
             replies.forEach(reply => {
-                html += createMessageCard(reply, false, false, false, false, true, true);
+                const isOwnReply = reply.userId === currentUser.id;
+                html += createMessageCard(reply, false, false, isOwnReply, false, true, true);
             });
             html += '</div>';
         }
@@ -265,14 +259,12 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
     `;
 }
 
-// escape HTML
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// toggle message selection
 function toggleMessageSelection(id) {
     const card = document.querySelector(`[data-id="${id}"]`);
     if (selectedMessages.has(id)) {
@@ -284,7 +276,7 @@ function toggleMessageSelection(id) {
     }
 }
 
-// archive selected messages - archives entire thread for this user
+// archive selected messages
 async function archiveSelected() {
     if (selectedMessages.size === 0) {
         showNotification('Please select messages to archive', 'error');
@@ -293,12 +285,10 @@ async function archiveSelected() {
     
     showConfirmModal(`Archive ${selectedMessages.size} message thread(s)?`, async () => {
         try {
-            // get all message IDs including replies
             const allMessageIds = new Set();
             
             selectedMessages.forEach(msgId => {
                 allMessageIds.add(msgId);
-                // find all replies to this message
                 const replies = messages.filter(m => m.parentMessageId === msgId);
                 replies.forEach(reply => allMessageIds.add(reply._id));
             });
@@ -313,7 +303,7 @@ async function archiveSelected() {
             
             if (data.success) {
                 selectedMessages.clear();
-                await loadMessages();
+                await loadMessages(); // Reload to remove archived messages
                 showNotification('Message threads archived successfully', 'success');
             }
         } catch (error) {
@@ -323,7 +313,6 @@ async function archiveSelected() {
     });
 }
 
-// edit message (inline textarea)
 function editMessage(id) {
     if (editingMessageId) {
         showNotification('Please save or cancel the current edit first', 'error');
@@ -345,7 +334,6 @@ function editMessage(id) {
     }, 100);
 }
 
-// save message edit
 async function saveMessageEdit(id) {
     const textarea = document.getElementById(`edit-textarea-${id}`);
     if (!textarea) return;
@@ -382,13 +370,11 @@ async function saveMessageEdit(id) {
     }
 }
 
-// cancel message edit
 function cancelMessageEdit() {
     editingMessageId = null;
     renderHomeMessages();
 }
 
-// reply to message
 function replyToMessage(parentId) {
     if (replyingToMessageId) {
         showNotification('Please finish your current reply first', 'error');
@@ -410,7 +396,6 @@ function replyToMessage(parentId) {
     }, 100);
 }
 
-// preview reply translation
 async function previewReply(parentId) {
     const replyText = document.getElementById(`reply-text-${parentId}`).value.trim();
     const sourceLang = document.getElementById(`reply-source-lang-${parentId}`).value;
@@ -453,7 +438,6 @@ async function previewReply(parentId) {
     }
 }
 
-// submit reply
 async function submitReply(parentId) {
     const replyText = document.getElementById(`reply-text-${parentId}`).value.trim();
     const sourceLang = document.getElementById(`reply-source-lang-${parentId}`).value;
@@ -492,13 +476,11 @@ async function submitReply(parentId) {
     }
 }
 
-// cancel reply
 function cancelReply() {
     replyingToMessageId = null;
     renderHomeMessages();
 }
 
-// delete message - soft delete for others' messages, hard delete for own messages
 async function deleteMessage(id) {
     const msg = messages.find(m => m._id === id);
     const isOwnMessage = msg && msg.userId === currentUser.id;
@@ -516,7 +498,6 @@ async function deleteMessage(id) {
             const data = await response.json();
             
             if (data.success) {
-                // Remove from local array immediately for better UX
                 messages = messages.filter(m => m._id !== id && m.parentMessageId !== id);
                 renderHomeMessages();
                 showNotification('Message removed successfully', 'success');
@@ -528,9 +509,7 @@ async function deleteMessage(id) {
     });
 }
 
-// delete archived message - soft delete for others' messages, hard delete for own messages
 async function deleteArchivedMessage(id) {
-    // find the message in the archived list to check ownership
     const response = await fetch(`${API_URL}/messages/archived`);
     const data = await response.json();
     const archivedMessages = data.success ? data.data : [];
@@ -561,36 +540,9 @@ async function deleteArchivedMessage(id) {
     });
 }
 
-// mark all as read
-async function markAllAsRead() {
-    if (unreadMessages.length === 0) {
-        showNotification('No unread messages', 'error');
-        return;
-    }
-    
-    showConfirmModal(`Mark all ${unreadMessages.length} messages as read?`, async () => {
-        try {
-            for (const msg of unreadMessages) {
-                await fetch(`${API_URL}/messages/${msg._id}/read`, {
-                    method: 'PATCH'
-                });
-            }
-            
-            await loadMessages();
-            if (typeof loadUnreadMessages === 'function') {
-                await loadUnreadMessages(true);
-            }
-            showNotification('All messages marked as read', 'success');
-        } catch (error) {
-            console.error('Error marking all as read:', error);
-            showNotification('Failed to mark all as read', 'error');
-        }
-    });
-}
-
-// clear archived messages (PERMANENTLY DELETE ALL archived messages)
+// clear archived - permanently delete archived messages
 async function clearArchived() {
-    showConfirmModal('Permanently delete all archived messages? This cannot be undone.', async () => {
+    showConfirmModal('Permanently delete all archived messages from your view?', async () => {
         try {
             console.log('Clearing all archived messages...');
             const response = await fetch(`${API_URL}/messages/clear-archived`, {
@@ -601,19 +553,19 @@ async function clearArchived() {
             const data = await response.json();
             
             if (data.success) {
-                // clear archived view immediately
+                // clear archived view
                 document.getElementById('archivedMessageList').innerHTML = '';
                 const emptyState = document.getElementById('archivedEmptyState');
                 if (emptyState) emptyState.style.display = 'block';
                 
-                // reload messages to ensure home feed is updated
+                // reload home messages - archived messages won't appear there
                 await loadMessages();
                 
                 showNotification(
-                    data.clearedCount > 0 
-                        ? `Deleted ${data.clearedCount} archived message(s)` 
+                    data.deletedCount > 0 
+                        ? `Deleted ${data.deletedCount} archived message(s)` 
                         : 'No archived messages to clear',
-                    data.clearedCount > 0 ? 'success' : 'error'
+                    data.deletedCount > 0 ? 'success' : 'error'
                 );
             } else {
                 throw new Error(data.error || 'Failed to clear archived messages');

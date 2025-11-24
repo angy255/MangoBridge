@@ -3,6 +3,8 @@
     background: white;
     padding: 20px;
     border-radius: 10px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .calendar-header {
@@ -10,6 +12,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .calendar-grid {
@@ -17,6 +21,7 @@
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 .calendar-day {
@@ -31,6 +36,8 @@
     align-items: center;
     justify-content: center;
     font-weight: 500;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .calendar-day:hover {
@@ -70,6 +77,9 @@
 .day-taskbar {
     max-height: 600px;
     overflow-y: auto;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
 }
 
 .taskbar-event-item {
@@ -100,6 +110,7 @@
     display: flex;
     gap: 8px;
     margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 /* event list */
@@ -146,19 +157,89 @@
     gap: 10px;
 }
 
-@media (max-width: 768px) {
+/* calendar wrapper responsive layout */
+#calendar .chat-container > div:first-of-type {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+/* tablet breakpoint */
+@media (max-width: 1024px) {
+    #calendar .chat-container > div:first-of-type {
+        grid-template-columns: 1fr;
+    }
+    
+    .calendar-header {
+        justify-content: center;
+        text-align: center;
+    }
+    
     .calendar-grid {
-        gap: 5px;
+        gap: 8px;
+    }
+    
+    .calendar-day {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    .day-taskbar {
+        max-height: 400px;
+    }
+}
+
+/* mobile breakpoint */
+@media (max-width: 768px) {
+    #calendar .chat-container > div:first-of-type {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+    
+    .calendar-container {
+        padding: 15px;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .calendar-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .calendar-header h2 {
+        font-size: 20px;
+        margin: 0;
+    }
+    
+    .calendar-header div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .calendar-header button {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .calendar-grid {
+        gap: 4px;
+        width: 100%;
     }
 
     .calendar-day {
-        font-size: 12px;
-        padding: 5px;
+        font-size: 11px;
+        padding: 4px;
+        min-height: 35px;
     }
-
-    .calendar-header {
-        flex-direction: column;
-        gap: 15px;
+    
+    .event-indicator {
+        bottom: 2px;
+        right: 2px;
+        min-width: 14px;
+        height: 14px;
+        font-size: 9px;
     }
 
     .event-item {
@@ -171,8 +252,80 @@
         width: 100%;
         justify-content: flex-end;
     }
+    
+    /* make day taskbar full width on mobile */
+    .day-taskbar {
+        width: 100%;
+        max-width: 100%;
+        max-height: 350px;
+        padding: 15px;
+    }
+    
+    .taskbar-event-item {
+        padding: 10px;
+    }
+    
+    .taskbar-event-actions {
+        flex-direction: column;
+    }
+    
+    .taskbar-event-actions .icon-btn {
+        width: 100%;
+    }
 }
 
-.icon-btn{
+/* small mobile breakpoint */
+@media (max-width: 480px) {
+    .calendar-container {
+        padding: 10px;
+    }
+    
+    .calendar-header h2 {
+        font-size: 16px;
+    }
+    
+    .calendar-header button {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    
+    .calendar-grid {
+        gap: 2px;
+    }
+    
+    .calendar-day {
+        font-size: 10px;
+        padding: 2px;
+        min-height: 30px;
+        border-radius: 4px;
+    }
+    
+    .event-indicator {
+        min-width: 12px;
+        height: 12px;
+        font-size: 8px;
+        bottom: 1px;
+        right: 1px;
+    }
+    
+    .day-taskbar {
+        padding: 10px;
+        max-height: 300px;
+    }
+    
+    .taskbar-event-item {
+        padding: 8px;
+        font-size: 13px;
+    }
+}
+
+/* ensure calendar container never overflows */
+#calendar .chat-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.icon-btn {
     font-weight: bold;
 }

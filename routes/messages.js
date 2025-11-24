@@ -5,9 +5,10 @@ const ChatGroup = require('../models/ChatGroup');
 const { requireAuth } = require('../middleware/auth');
 const { translateMessage } = require('../services/translationService');
 
+// GET /all - Get all non-group messages, excluding archived ones for current user
 router.get('/all', requireAuth, async (req, res) => {
   try {
-    // get all group message IDs to exclude them
+    // Get all group message IDs to exclude them
     const groups = await ChatGroup.find({});
     const groupMessageIds = new Set();
     groups.forEach(group => {
@@ -16,15 +17,19 @@ router.get('/all', requireAuth, async (req, res) => {
       });
     });
     
-    // get all messages
+    // Get all messages
     const allMessages = await Message.find({})
       .sort({ timestamp: -1 })
       .limit(200);
     
-    // filter out group messages
-    const messages = allMessages.filter(msg => 
-      !groupMessageIds.has(msg._id.toString())
-    );
+    // Filter out:
+    // 1. Group messages
+    // 2. Messages archived by current user
+    const messages = allMessages.filter(msg => {
+      const isGroupMessage = groupMessageIds.has(msg._id.toString());
+      const isArchivedByUser = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
+      return !isGroupMessage && !isArchivedByUser;
+    });
     
     res.json({
       success: true,
@@ -40,14 +45,19 @@ router.get('/all', requireAuth, async (req, res) => {
   }
 });
 
-// Get user's own messages only (excluding archived)
+// GET / - Get user's own messages only (excluding archived)
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const messages = await Message.find({ 
+    const allMessages = await Message.find({ 
       userId: req.user._id
     })
       .sort({ timestamp: -1 })
       .limit(100);
+    
+    // Filter out messages archived by current user
+    const messages = allMessages.filter(msg => 
+      !(msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true)
+    );
     
     res.json({
       success: true,
@@ -63,19 +73,14 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-// Get unread message threads where user is involved
+// GET /unread-threads - Get unread message threads where user is involved
 router.get('/unread-threads', requireAuth, async (req, res) => {
   try {
-    // Get all unread messages
     const allMessages = await Message.find({}).sort({ timestamp: -1 });
     
-    // find threads where:
-    // 1. user received a message (not author of parent)
-    // 2. user replied to a message
     const userThreads = new Set();
     
     allMessages.forEach(msg => {
-      // if user is not the author, add this thread
       if (msg.userId.toString() !== req.user._id.toString()) {
         if (msg.parentMessageId) {
           userThreads.add(msg.parentMessageId.toString());
@@ -84,16 +89,16 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
         }
       }
       
-      // if user replied to something, add that thread
       if (msg.userId.toString() === req.user._id.toString() && msg.parentMessageId) {
         userThreads.add(msg.parentMessageId.toString());
       }
     });
     
-    // Get all messages from these threads
+    // filter out archived messages
     const relevantMessages = allMessages.filter(msg => {
       const threadId = msg.parentMessageId ? msg.parentMessageId.toString() : msg._id.toString();
-      return userThreads.has(threadId);
+      const isArchivedByUser = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
+      return userThreads.has(threadId) && !isArchivedByUser;
     });
     
     res.json({
@@ -109,52 +114,9 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
   }
 });
 
-// Get unread messages from other users (legacy endpoint)
-router.get('/unread', requireAuth, async (req, res) => {
-  try {
-    const messages = await Message.find({
-      userId: { $ne: req.user._id },
-      isRead: false
-    }).sort({ timestamp: -1 });
-    
-    res.json({
-      success: true,
-      data: messages
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch unread messages'
-    });
-  }
-});
-
-// Get read messages from other users
-router.get('/read', requireAuth, async (req, res) => {
-  try {
-    const messages = await Message.find({
-      userId: { $ne: req.user._id },
-      isRead: true
-    })
-      .sort({ timestamp: -1 })
-      .limit(50);
-    
-    res.json({
-      success: true,
-      data: messages
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch read messages'
-    });
-  }
-});
-
-// Get archived messages for current user only
+// GET /archived - Get archived messages for current user only
 router.get('/archived', requireAuth, async (req, res) => {
   try {
-    // find all messages where current user has archived them
     const messages = await Message.find({})
       .sort({ timestamp: -1 });
     
@@ -176,7 +138,7 @@ router.get('/archived', requireAuth, async (req, res) => {
   }
 });
 
-// Create new message
+// POST / - Create new message
 router.post('/', requireAuth, async (req, res) => {
   try {
     const { sourceLang, targetLang, originalText } = req.body;
@@ -219,7 +181,7 @@ router.post('/', requireAuth, async (req, res) => {
   }
 });
 
-// reply to a message
+// POST /reply - Reply to a message
 router.post('/reply', requireAuth, async (req, res) => {
   try {
     const { parentMessageId, originalText, sourceLang, targetLang } = req.body;
@@ -246,12 +208,11 @@ router.post('/reply', requireAuth, async (req, res) => {
       translatedText: translationResult.translation,
       aiNote: translationResult.note,
       parentMessageId,
-      isRead: false // New replies are unread
+      isRead: false
     });
 
     await reply.save();
 
-    // update parent message
     await Message.findByIdAndUpdate(parentMessageId, {
       $push: { replies: reply._id }
     });
@@ -269,7 +230,7 @@ router.post('/reply', requireAuth, async (req, res) => {
   }
 });
 
-// edit message (only own messages)
+// PATCH /:id - Edit message (only own messages)
 router.patch('/:id', requireAuth, async (req, res) => {
   try {
     const { originalText } = req.body;
@@ -308,7 +269,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
   }
 });
 
-// mark message as read
+// PATCH /:id/read - Mark message as read
 router.patch('/:id/read', requireAuth, async (req, res) => {
   try {
     const message = await Message.findByIdAndUpdate(
@@ -333,29 +294,7 @@ router.patch('/:id/read', requireAuth, async (req, res) => {
   }
 });
 
-// archive messages (only own messages) - DEPRECATED, use archive-thread instead
-router.post('/archive', requireAuth, async (req, res) => {
-  try {
-    const { messageIds } = req.body;
-
-    await Message.updateMany(
-      {
-        _id: { $in: messageIds },
-        userId: req.user._id
-      },
-      { isArchived: true }
-    );
-
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to archive messages'
-    });
-  }
-});
-
-// archive entire thread (for current user only)
+// POST /archive-thread - Archive entire thread for current user
 router.post('/archive-thread', requireAuth, async (req, res) => {
   try {
     const { messageIds } = req.body;
@@ -391,7 +330,7 @@ router.post('/archive-thread', requireAuth, async (req, res) => {
   }
 });
 
-
+// POST /clear-archived - Permanently delete archived messages for current user
 router.post('/clear-archived', requireAuth, async (req, res) => {
   try {
     console.log(`User ${req.user._id} clearing their archived messages`);
@@ -403,33 +342,48 @@ router.post('/clear-archived', requireAuth, async (req, res) => {
       .filter(msg => msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true)
       .map(msg => msg._id);
     
-    console.log(`Found ${archivedMessageIds.length} archived messages to unarchive`);
+    console.log(`Found ${archivedMessageIds.length} archived messages to delete`);
     
     if (archivedMessageIds.length === 0) {
       return res.json({
         success: true,
-        clearedCount: 0,
+        deletedCount: 0,
         message: 'No archived messages to clear'
       });
     }
     
-    const updatePromises = archivedMessageIds.map(messageId =>
-      Message.findByIdAndUpdate(
-        messageId,
-        { $unset: { [`archivedBy.${req.user._id}`]: "" } },
-        { new: true }
-      )
-    );
+    // delete these messages for this user
+    // if user owns the message, hard delete it
+    // if user doesn't own it, just remove the archive flag
+    let deletedCount = 0;
     
-    const results = await Promise.allSettled(updatePromises);
-    const clearedCount = results.filter(r => r.status === 'fulfilled').length;
+    for (const messageId of archivedMessageIds) {
+      const message = await Message.findById(messageId);
+      
+      if (!message) continue;
+      
+      if (message.userId.toString() === req.user._id.toString()) {
+        // user owns this message - hard delete it
+        await Message.findByIdAndDelete(messageId);
+        // delete replies
+        await Message.deleteMany({ parentMessageId: messageId });
+        deletedCount++;
+      } else {
+        // user doesn't own it - just remove archive flag
+        await Message.findByIdAndUpdate(
+          messageId,
+          { $unset: { [`archivedBy.${req.user._id}`]: "" } }
+        );
+        deletedCount++;
+      }
+    }
     
-    console.log(`✓ Cleared ${clearedCount} messages from archived view`);
+    console.log(`✓ Cleared ${deletedCount} archived messages`);
     
     res.json({
       success: true,
-      clearedCount: clearedCount,
-      message: `Cleared ${clearedCount} archived message(s)`
+      deletedCount: deletedCount,
+      message: `Cleared ${deletedCount} archived message(s)`
     });
   } catch (error) {
     console.error('Error clearing archived messages:', error);
@@ -440,17 +394,15 @@ router.post('/clear-archived', requireAuth, async (req, res) => {
   }
 });
 
-// delete message (only own messages) - IMPROVED with better 404 handling
+// DELETE /:id - Delete message
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    // first check if message exists
     const message = await Message.findById(req.params.id);
     
     if (!message) {
-      // message doesn't exist - return success for idempotent deletes
       console.log(`Message ${req.params.id} not found (already deleted)`);
-      return res.status(404).json({
-        success: true, // Changed to true for idempotent deletes
+      return res.json({
+        success: true,
         message: 'Message not found (may have been already deleted)'
       });
     }
@@ -466,7 +418,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
     // delete the message
     await Message.findByIdAndDelete(req.params.id);
 
-    // also delete any replies to this message
+    //  delete any replies to this message
     await Message.deleteMany({ parentMessageId: req.params.id });
 
     console.log(`✓ Message ${req.params.id} deleted successfully`);

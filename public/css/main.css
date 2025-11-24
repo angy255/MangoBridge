@@ -242,6 +242,8 @@ body {
     z-index: 1000;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .modal.active {
@@ -253,9 +255,10 @@ body {
     border-radius: 15px;
     padding: 30px;
     max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
+    width: 100%;
+    max-height: 90vh;
     overflow-y: auto;
+    margin: auto;
 }
 
 .modal-header {
@@ -270,6 +273,7 @@ body {
 .modal-header h3 {
     color: var(--text-primary);
     font-size: 24px;
+    margin: 0;
 }
 
 .close-modal {
@@ -278,10 +282,104 @@ body {
     color: var(--text-tertiary);
     border: none;
     background: none;
+    padding: 0;
+    line-height: 1;
 }
 
 .close-modal:hover {
     color: var(--text-primary);
+}
+
+/* tablet responsiveness */
+@media (max-width: 768px) {
+    .modal {
+        padding: 15px;
+        align-items: flex-start;
+        padding-top: 30px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        max-width: 100%;
+        width: 100%;
+        max-height: 85vh;
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+    }
+    
+    .modal-header h3 {
+        font-size: 20px;
+    }
+    
+    .close-modal {
+        font-size: 24px;
+    }
+}
+
+/* responsiveness */
+@media (max-width: 480px) {
+    .modal {
+        padding: 10px;
+        padding-top: 20px;
+    }
+    
+    .modal-content {
+        padding: 15px;
+        max-height: 90vh;
+        border-radius: 10px;
+    }
+    
+    .modal-header {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+    }
+    
+    .close-modal {
+        font-size: 22px;
+    }
+    
+    /* make form inputs more touch-friendly */
+    .modal-content .form-input,
+    .modal-content .form-select,
+    .modal-content .form-textarea {
+        font-size: 16px; /* prevents zoom on iOS */
+    }
+    
+    /* stack buttons vertically on small screens */
+    .modal-content .button-row {
+        flex-direction: column;
+    }
+    
+    .modal-content .button-row .btn {
+        width: 100%;
+    }
+}
+
+/* ensure scrollable content doesn't overflow */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
 }
 
 /* notifications */

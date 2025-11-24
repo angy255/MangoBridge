@@ -209,82 +209,6 @@ router.post('/:id/mark-read', requireAuth, async (req, res) => {
   }
 });
 
-// add message thread to group
-router.post('/:id/add-thread', requireAuth, async (req, res) => {
-  try {
-    const { messageId } = req.body;
-
-    const group = await ChatGroup.findOne({
-      _id: req.params.id,
-      $or: [
-        { createdBy: req.user._id },
-        { members: req.user._id }
-      ]
-    }).populate('members', 'userName avatar email');
-
-    if (!group) {
-      return res.status(404).json({
-        success: false,
-        error: 'Group not found'
-      });
-    }
-
-    if (!group.messageThreads.includes(messageId)) {
-      group.messageThreads.push(messageId);
-      await group.save();
-    }
-
-    res.json({
-      success: true,
-      data: group
-    });
-  } catch (error) {
-    console.error('Error adding thread to group:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to add thread to group'
-    });
-  }
-});
-
-// remove message thread from group
-router.post('/:id/remove-thread', requireAuth, async (req, res) => {
-  try {
-    const { messageId } = req.body;
-
-    const group = await ChatGroup.findOne({
-      _id: req.params.id,
-      $or: [
-        { createdBy: req.user._id },
-        { members: req.user._id }
-      ]
-    }).populate('members', 'userName avatar email');
-
-    if (!group) {
-      return res.status(404).json({
-        success: false,
-        error: 'Group not found'
-      });
-    }
-
-    group.messageThreads = group.messageThreads.filter(
-      id => id.toString() !== messageId
-    );
-    await group.save();
-
-    res.json({
-      success: true,
-      data: group
-    });
-  } catch (error) {
-    console.error('Error removing thread from group:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to remove thread from group'
-    });
-  }
-});
-
 // add member to group
 router.post('/:id/add-member', requireAuth, async (req, res) => {
   try {
@@ -348,7 +272,7 @@ router.post('/:id/remove-member', requireAuth, async (req, res) => {
 
     const group = await ChatGroup.findOne({
       _id: req.params.id,
-      createdBy: req.user._id // only creator can remove members
+      createdBy: req.user._id // Only creator can remove members
     });
 
     if (!group) {
@@ -386,10 +310,10 @@ router.post('/:id/remove-member', requireAuth, async (req, res) => {
   }
 });
 
-// delete chat group
+// delete chat group and all associated messages
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const group = await ChatGroup.findOneAndDelete({
+    const group = await ChatGroup.findOne({
       _id: req.params.id,
       createdBy: req.user._id
     });
@@ -401,9 +325,24 @@ router.delete('/:id', requireAuth, async (req, res) => {
       });
     }
 
+    console.log(`Deleting group ${group.name} and its ${group.messageThreads.length} messages`);
+
+    // delete all messages associated with this group so they're not in feed
+    if (group.messageThreads.length > 0) {
+      const deleteResult = await Message.deleteMany({
+        _id: { $in: group.messageThreads }
+      });
+      console.log(`✓ Deleted ${deleteResult.deletedCount} messages from group`);
+    }
+
+    // now delete the group itself
+    await ChatGroup.findByIdAndDelete(req.params.id);
+
+    console.log(`✓ Group ${group.name} deleted successfully`);
+
     res.json({
       success: true,
-      message: 'Group deleted successfully'
+      message: 'Group and all its messages deleted successfully'
     });
   } catch (error) {
     console.error('Error deleting group:', error);
