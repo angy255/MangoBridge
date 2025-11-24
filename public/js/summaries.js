@@ -104,7 +104,7 @@ function renderMeetingSummaries(summaries) {
 async function deleteMeetingSummary(id) {
     const API_MEETINGS_URL = '/api/meetings';
     
-    showConfirmModal('Delete this meeting summary? This cannot be undone.', async () => {
+    showConfirmModal('Delete this meeting summary?', async () => {
         try {
             const response = await fetch(`${API_MEETINGS_URL}/summaries/${id}`, {
                 method: 'DELETE'

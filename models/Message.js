@@ -51,6 +51,10 @@ const messageSchema = new mongoose.Schema({
     of: Boolean,
     default: {}
   },
+  deletedFor: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   parentMessageId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',

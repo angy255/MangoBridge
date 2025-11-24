@@ -105,7 +105,7 @@ function renderHomeMessages() {
     }).join('');
 }
 
-// render archived messages
+// render archived messages - NO EDIT/DELETE BUTTONS
 function renderArchivedMessages(archivedMessages) {
     const container = document.getElementById('archivedMessageList');
     const emptyState = document.getElementById('archivedEmptyState');
@@ -128,14 +128,13 @@ function renderArchivedMessages(archivedMessages) {
     container.innerHTML = parentMessages.map(msg => {
         const replies = archivedMessages.filter(r => r.parentMessageId === msg._id);
         
-        const isOwnMessage = msg.userId === currentUser.id;
-        let html = createMessageCard(msg, false, false, isOwnMessage, false, true);
+        // NO action buttons in archived tab
+        let html = createMessageCard(msg, false, false, false, false, true);
         
         if (replies.length > 0) {
             html += '<div class="replies-container">';
             replies.forEach(reply => {
-                const isOwnReply = reply.userId === currentUser.id;
-                html += createMessageCard(reply, false, false, isOwnReply, false, true, true);
+                html += createMessageCard(reply, false, false, false, false, true, true);
             });
             html += '</div>';
         }
@@ -189,11 +188,6 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
                         <button class="btn btn-secondary" onclick="editMessage('${msg._id}')">Edit</button>
                     `}
                     <button class="btn btn-danger" onclick="deleteMessage('${msg._id}')">Delete</button>
-                </div>
-            ` : ''}
-            ${isArchived && isOwnMessage ? `
-                <div class="message-actions">
-                    <button class="btn btn-danger" onclick="deleteArchivedMessage('${msg._id}')">Delete</button>
                 </div>
             ` : ''}
             ${showReply && !isOwnMessage && !isReplying ? `
@@ -303,7 +297,7 @@ async function archiveSelected() {
             
             if (data.success) {
                 selectedMessages.clear();
-                await loadMessages(); // Reload to remove archived messages
+                await loadMessages();
                 showNotification('Message threads archived successfully', 'success');
             }
         } catch (error) {
@@ -509,43 +503,12 @@ async function deleteMessage(id) {
     });
 }
 
-async function deleteArchivedMessage(id) {
-    const response = await fetch(`${API_URL}/messages/archived`);
-    const data = await response.json();
-    const archivedMessages = data.success ? data.data : [];
-    const msg = archivedMessages.find(m => m._id === id);
-    const isOwnMessage = msg && msg.userId === currentUser.id;
-    
-    const confirmText = isOwnMessage 
-        ? 'Permanently delete this message? This cannot be undone and will be removed for everyone.'
-        : 'Remove this message from your view? The message will remain for other users.';
-    
-    showConfirmModal(confirmText, async () => {
-        try {
-            const response = await fetch(`${API_URL}/messages/${id}`, {
-                method: 'DELETE'
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                showNotification('Message removed successfully', 'success');
-                await loadArchivedMessages();
-                await loadMessages();
-            }
-        } catch (error) {
-            console.error('Error deleting message:', error);
-            showNotification('Failed to remove message', 'error');
-        }
-    });
-}
-
-// clear archived - permanently delete archived messages
+// clear archived - permanently delete archived messages for user
 async function clearArchived() {
-    showConfirmModal('Permanently delete all archived messages from your view?', async () => {
+    showConfirmModal('Permanently delete all archived messages?', async () => {
         try {
             console.log('Clearing all archived messages...');
-            const response = await fetch(`${API_URL}/messages/clear-archived`, {
+            const response = await fetch(`${API_URL}/messages/delete-archived`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -558,12 +521,12 @@ async function clearArchived() {
                 const emptyState = document.getElementById('archivedEmptyState');
                 if (emptyState) emptyState.style.display = 'block';
                 
-                // reload home messages - archived messages won't appear there
+                // reload home messages
                 await loadMessages();
                 
                 showNotification(
                     data.deletedCount > 0 
-                        ? `Deleted ${data.deletedCount} archived message(s)` 
+                        ? `Permanently deleted ${data.deletedCount} archived message(s)` 
                         : 'No archived messages to clear',
                     data.deletedCount > 0 ? 'success' : 'error'
                 );

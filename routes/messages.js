@@ -25,10 +25,12 @@ router.get('/all', requireAuth, async (req, res) => {
     // Filter out:
     // 1. Group messages
     // 2. Messages archived by current user
+    // 3. Messages in deletedFor array for current user
     const messages = allMessages.filter(msg => {
       const isGroupMessage = groupMessageIds.has(msg._id.toString());
       const isArchivedByUser = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
-      return !isGroupMessage && !isArchivedByUser;
+      const isDeletedForUser = msg.deletedFor && msg.deletedFor.includes(req.user._id.toString());
+      return !isGroupMessage && !isArchivedByUser && !isDeletedForUser;
     });
     
     res.json({
@@ -54,10 +56,12 @@ router.get('/', requireAuth, async (req, res) => {
       .sort({ timestamp: -1 })
       .limit(100);
     
-    // Filter out messages archived by current user
-    const messages = allMessages.filter(msg => 
-      !(msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true)
-    );
+    // Filter out messages archived by current user or deleted for user
+    const messages = allMessages.filter(msg => {
+      const isArchived = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
+      const isDeleted = msg.deletedFor && msg.deletedFor.includes(req.user._id.toString());
+      return !isArchived && !isDeleted;
+    });
     
     res.json({
       success: true,
@@ -94,11 +98,12 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
       }
     });
     
-    // filter out archived messages
+    // filter out archived messages and deleted messages
     const relevantMessages = allMessages.filter(msg => {
       const threadId = msg.parentMessageId ? msg.parentMessageId.toString() : msg._id.toString();
       const isArchivedByUser = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
-      return userThreads.has(threadId) && !isArchivedByUser;
+      const isDeletedForUser = msg.deletedFor && msg.deletedFor.includes(req.user._id.toString());
+      return userThreads.has(threadId) && !isArchivedByUser && !isDeletedForUser;
     });
     
     res.json({
@@ -120,10 +125,12 @@ router.get('/archived', requireAuth, async (req, res) => {
     const messages = await Message.find({})
       .sort({ timestamp: -1 });
     
-    // filter messages where archivedBy contains current user
-    const archivedMessages = messages.filter(msg => 
-      msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true
-    );
+    // filter messages where archivedBy contains current user AND not in deletedFor
+    const archivedMessages = messages.filter(msg => {
+      const isArchived = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
+      const isDeleted = msg.deletedFor && msg.deletedFor.includes(req.user._id.toString());
+      return isArchived && !isDeleted;
+    });
     
     res.json({
       success: true,
@@ -181,7 +188,7 @@ router.post('/', requireAuth, async (req, res) => {
   }
 });
 
-// POST /reply - Reply to a message
+// POST /reply - reply to a message
 router.post('/reply', requireAuth, async (req, res) => {
   try {
     const { parentMessageId, originalText, sourceLang, targetLang } = req.body;
@@ -230,7 +237,7 @@ router.post('/reply', requireAuth, async (req, res) => {
   }
 });
 
-// PATCH /:id - Edit message (only own messages)
+// PATCH /:id - edit message (only own messages)
 router.patch('/:id', requireAuth, async (req, res) => {
   try {
     const { originalText } = req.body;
@@ -269,7 +276,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
   }
 });
 
-// PATCH /:id/read - Mark message as read
+// PATCH /:id/read - mark message as read
 router.patch('/:id/read', requireAuth, async (req, res) => {
   try {
     const message = await Message.findByIdAndUpdate(
@@ -294,7 +301,7 @@ router.patch('/:id/read', requireAuth, async (req, res) => {
   }
 });
 
-// POST /archive-thread - Archive entire thread for current user
+// POST /archive-thread - archive entire thread for current user
 router.post('/archive-thread', requireAuth, async (req, res) => {
   try {
     const { messageIds } = req.body;
@@ -330,10 +337,10 @@ router.post('/archive-thread', requireAuth, async (req, res) => {
   }
 });
 
-// POST /clear-archived - Permanently delete archived messages for current user
-router.post('/clear-archived', requireAuth, async (req, res) => {
+// POST /delete-archived - permanently delete archived messages for current user
+router.post('/delete-archived', requireAuth, async (req, res) => {
   try {
-    console.log(`User ${req.user._id} clearing their archived messages`);
+    console.log(`User ${req.user._id} permanently deleting their archived messages`);
     
     // find all messages archived by this user
     const allMessages = await Message.find({});
@@ -348,34 +355,71 @@ router.post('/clear-archived', requireAuth, async (req, res) => {
       return res.json({
         success: true,
         deletedCount: 0,
+        message: 'No archived messages to delete'
+      });
+    }
+    
+    let deletedCount = 0;
+    
+    // add user to deletedFor array for all archived messages
+    // this completely hides them from the user across the entire platform
+    for (const messageId of archivedMessageIds) {
+      await Message.findByIdAndUpdate(
+        messageId,
+        { 
+          $addToSet: { deletedFor: req.user._id },
+          $unset: { [`archivedBy.${req.user._id}`]: "" }
+        }
+      );
+      deletedCount++;
+    }
+    
+    console.log(`✓ Permanently deleted ${deletedCount} archived messages for user`);
+    
+    res.json({
+      success: true,
+      deletedCount: deletedCount,
+      message: `Permanently deleted ${deletedCount} archived message(s)`
+    });
+  } catch (error) {
+    console.error('Error deleting archived messages:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete archived messages'
+    });
+  }
+});
+
+// POST /clear-archived 
+router.post('/clear-archived', requireAuth, async (req, res) => {
+  try {
+    console.log(`User ${req.user._id} clearing their archived messages (legacy endpoint)`);
+    
+    const allMessages = await Message.find({});
+    
+    const archivedMessageIds = allMessages
+      .filter(msg => msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true)
+      .map(msg => msg._id);
+    
+    if (archivedMessageIds.length === 0) {
+      return res.json({
+        success: true,
+        deletedCount: 0,
         message: 'No archived messages to clear'
       });
     }
     
-    // delete these messages for this user
-    // if user owns the message, hard delete it
-    // if user doesn't own it, just remove the archive flag
     let deletedCount = 0;
     
     for (const messageId of archivedMessageIds) {
-      const message = await Message.findById(messageId);
-      
-      if (!message) continue;
-      
-      if (message.userId.toString() === req.user._id.toString()) {
-        // user owns this message - hard delete it
-        await Message.findByIdAndDelete(messageId);
-        // delete replies
-        await Message.deleteMany({ parentMessageId: messageId });
-        deletedCount++;
-      } else {
-        // user doesn't own it - just remove archive flag
-        await Message.findByIdAndUpdate(
-          messageId,
-          { $unset: { [`archivedBy.${req.user._id}`]: "" } }
-        );
-        deletedCount++;
-      }
+      await Message.findByIdAndUpdate(
+        messageId,
+        { 
+          $addToSet: { deletedFor: req.user._id },
+          $unset: { [`archivedBy.${req.user._id}`]: "" }
+        }
+      );
+      deletedCount++;
     }
     
     console.log(`✓ Cleared ${deletedCount} archived messages`);
@@ -394,7 +438,7 @@ router.post('/clear-archived', requireAuth, async (req, res) => {
   }
 });
 
-// DELETE /:id - Delete message
+// DELETE /:id - delete message
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
@@ -418,7 +462,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
     // delete the message
     await Message.findByIdAndDelete(req.params.id);
 
-    //  delete any replies to this message
+    // delete any replies to this message
     await Message.deleteMany({ parentMessageId: req.params.id });
 
     console.log(`✓ Message ${req.params.id} deleted successfully`);
