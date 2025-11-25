@@ -1,4 +1,4 @@
-# 🌍 BridgeMango
+# BridgeMango 🥭
 Built to help global teams communicate naturally across languages without losing meaning in translation.
 
 Translate messages between 10+ languages while preserving cultural context and idioms — because "I'm in a pickle" shouldn't become "Estoy en un pepinillo" 🥒
