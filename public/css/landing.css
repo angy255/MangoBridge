@@ -1,0 +1,366 @@
+/* landing.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.landing-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffbb00;
+    min-height: 100vh;
+}
+
+.landing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* at top */
+.features-section {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    margin-bottom: 40px;
+}
+
+/* at bottom */
+.tagline-card {
+    background: white;
+    border-radius: 10px;
+    font-style: italic;
+    padding: 8px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    margin-top: 40px;
+}
+
+.tagline-card h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #7678ed;
+    margin-bottom: 16px;
+}
+
+.tagline {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* logo & login side by side */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* logo section */
+.logo-section {
+    background: white;
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-container {
+    text-align: center;
+    width: 100%;
+}
+
+.logo-container img {
+    max-width: 100%;
+    height: auto;
+    width: 450px;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-name {
+    font-size: 48px;
+    font-weight: 700;
+    color: #7678ed;
+}
+
+/* login section */
+.login-section {
+    background: white;
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.login-header h2 {
+    font-size: 40px;
+    font-weight: 700;
+    color: #7678ed;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    font-size: 16px;
+    color: black;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    color: black;
+    font-size: 16px;
+}
+
+.login-footer a {
+    color: #7678ed;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #7678ed;
+    box-shadow: 0 0 0 3px rgba(118, 120, 237, 0.1);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: #7678ed;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 120, 237, 0.4);
+}
+
+/* features section */
+.features-section {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.features-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #7678ed;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.mango{
+color: #3d348b;
+font-size: 32px;
+}
+
+.bridge{
+color: #f18701;
+font-size: 32px;
+}
+
+
+.features-nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.feature-nav-btn {
+    padding: 8px 8px;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.feature-nav-btn:hover {
+    background: #ebebeb;
+    border-color: #d0d0d0;
+    transform: translateY(-2px);
+}
+
+.feature-nav-btn.active {
+    background: #7678ed;
+    color: white;
+    border-color: #7678ed;
+}
+
+.feature-cards {
+    position: relative;
+    min-height: 180px;
+}
+
+.feature-card {
+    display: none;
+    padding: 40px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f1ff 100%);
+    border-radius: 16px;
+    border: 2px solid #e8e9ff;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.feature-card.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #7678ed;
+    margin-bottom: 16px;
+}
+
+.feature-card p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* responsive design */
+@media (max-width: 968px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .tagline-card h1 {
+        font-size: 36px;
+    }
+
+    .tagline {
+        font-size: 20px;
+    }
+
+    .logo-container img {
+        width: 350px;
+    }
+
+    .features-title {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 640px) {
+    .landing-container {
+        padding: 20px 16px;
+    }
+
+    .tagline-card {
+        padding: 30px 20px;
+    }
+
+    .tagline-card h1 {
+        font-size: 28px;
+    }
+
+    .tagline {
+        font-size: 18px;
+    }
+
+    .logo-section,
+    .login-section {
+        padding: 30px 24px;
+    }
+
+    .logo-container img {
+        width: 280px;
+    }
+
+    .features-section {
+        padding: 30px 20px;
+    }
+
+    .features-title {
+        font-size: 22px;
+    }
+
+    .feature-nav-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .feature-card {
+        padding: 30px 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 22px;
+    }
+
+    .feature-card p {
+        font-size: 16px;
+    }
+}

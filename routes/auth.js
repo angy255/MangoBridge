@@ -272,7 +272,7 @@ router.get('/logout', (req, res) => {
       if (err) {
         console.log('Error destroying session:', err);
       }
-      res.redirect('/login');
+      res.redirect('/');
     });
   });
 });

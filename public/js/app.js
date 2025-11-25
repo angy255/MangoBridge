@@ -1,4 +1,4 @@
-// main app initialization
+// main app initialization - without tab refresh functionality
 document.addEventListener('DOMContentLoaded', async() => {
     console.log('App initializing...', currentUser);
     
@@ -40,10 +40,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         setupNavigation();
         setupEventListeners();
         
-        // get last active tab from sessionStorage (for refresh persistence)
-        const lastActiveTab = sessionStorage.getItem('activeTab');
-        
-        // handle tab navigation from URL or session storage
+        // handle tab navigation from URL only
         const urlParams = new URLSearchParams(window.location.search);
         const tabFromUrl = urlParams.get('tab');
         const tabFromSession = sessionStorage.getItem('returnTab');
@@ -58,10 +55,6 @@ document.addEventListener('DOMContentLoaded', async() => {
             updateActiveNavLink(tabFromSession);
             // clear session storage
             sessionStorage.removeItem('returnTab');
-        } else if (lastActiveTab) {
-            // restore last active tab on page refresh
-            switchTab(lastActiveTab);
-            updateActiveNavLink(lastActiveTab);
         }
 
         console.log('✅ App initialized successfully');
@@ -83,9 +76,6 @@ function setupNavigation() {
             const tab = link.getAttribute('data-tab');
             switchTab(tab);
             updateActiveNavLink(tab);
-            
-            // save active tab to sessionStorage
-            sessionStorage.setItem('activeTab', tab);
         });
     });
     

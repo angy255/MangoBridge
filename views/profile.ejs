@@ -14,11 +14,13 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
-                <div class="nav-brand">Team Chat</div>
+                <a href="/" class="nav-brand">
+                    <img src="/images2/mangobridge-logo.png" alt="MangoBridge" class="nav-logo">
+                </a>
             </div>
             <div class="nav-right">
                 <% if (isOwnProfile) { %>
-                    <a href="/" class="btn btn-secondary">Go back</a>
+                    <a href="/" class="btn btn-secondary">Back to home</a>
                 <% } else { %>
                     <a href="/?tab=unread" class="btn btn-secondary"> Back to Group Chats</a>
                 <% } %>
@@ -46,7 +48,7 @@
             <% } %>
 
             <% if (isOwnProfile) { %>
-                <!-- EDITABLE FORM for own profile -->
+                <!-- form for own profile -->
                 <form action="/profile" method="POST" enctype="multipart/form-data" class="profile-form" id="profileForm">
                     <div class="profile-section">
                         <h3>Profile Picture</h3>

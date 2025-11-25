@@ -1,4 +1,4 @@
-/* navigation.css - Responsive hamburger menu */
+/* navigation.css - hamburger menu */
 
 .navbar {
     background: var(--card-bg);
@@ -25,12 +25,23 @@
 }
 
 .nav-brand {
-    font-size: 24px;
-    font-weight: bold;
-    color: #667eea;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
 }
 
-/* Hamburger menu button */
+.nav-logo {
+    height: 45px;
+    width: auto;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.nav-logo:hover {
+    opacity: 0.8;
+}
+
+/* hamburger menu button */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -79,7 +90,7 @@ body.dark-mode .hamburger span {
     cursor: pointer;
     font-size: 15px;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: black;
     border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
@@ -103,7 +114,7 @@ body.dark-mode .hamburger span {
     min-width: 20px;
     height: 20px;
     padding: 0 6px;
-    background: #dc3545;
+    background: #f35b04;
     color: white;
     border-radius: 10px;
     font-size: 11px;
@@ -165,7 +176,7 @@ body.dark-mode .hamburger span {
 
 .logout-btn {
     padding: 8px 15px;
-    background: #dc3545;
+    background: #f35b04;
     color: white;
     border: none;
     border-radius: 8px;
@@ -178,7 +189,7 @@ body.dark-mode .hamburger span {
 }
 
 .logout-btn:hover {
-    background: #c82333;
+    background: #FFB84D;
     transform: translateY(-2px);
 }
 
@@ -230,8 +241,8 @@ body.dark-mode .hamburger span {
         padding: 15px 20px;
     }
     
-    .nav-brand {
-        font-size: 22px;
+    .nav-logo {
+        height: 36px;
     }
     
     .nav-right {
@@ -297,8 +308,8 @@ body.dark-mode .hamburger span {
         padding: 15px;
     }
     
-    .nav-brand {
-        font-size: 20px;
+    .nav-logo {
+        height: 32px;
     }
     
     .nav-right {
@@ -321,8 +332,8 @@ body.dark-mode .hamburger span {
    Very small phones
    ============================================ */
 @media (max-width: 480px) {
-    .nav-brand {
-        font-size: 18px;
+    .nav-logo {
+        height: 28px;
     }
     
     .user-avatar {

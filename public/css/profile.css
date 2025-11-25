@@ -140,7 +140,7 @@
 }
 
 .btn-large {
-    width: 100%;
+    width: max-content;
     padding: 15px;
     font-size: 18px;
 }

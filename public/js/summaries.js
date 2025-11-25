@@ -1,5 +1,3 @@
-// meeting summaries management
-
 // load meeting summaries
 async function loadMeetingSummaries() {
     const API_MEETINGS_URL = '/api/meetings';
@@ -79,7 +77,7 @@ function renderMeetingSummaries(summaries) {
             </div>
             ${summary.transcript ? `
                 <details style="margin-top: 15px;">
-                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: #f0f7ff; border-radius: 5px;">
+                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: black; border-radius: 5px; width: max-content;">
                         View Full Transcript
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">
@@ -89,7 +87,7 @@ function renderMeetingSummaries(summaries) {
             ` : ''}
             ${summary.translatedTranscript ? `
                 <details style="margin-top: 10px;">
-                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: #e3f2fd; border-radius: 5px;">
+                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: black; border-radius: 5px; width: max-content;">
                         View Translation
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">

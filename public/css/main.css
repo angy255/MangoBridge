@@ -8,8 +8,8 @@
 }
 
 :root {
-    --bg-gradient-start: #667eea;
-    --bg-gradient-end: #764ba2;
+    --bg-gradient-start: #ffbb00;
+    /* --bg-gradient-end: #764ba2; */
     --card-bg: white;
     --text-primary: #333;
     --text-secondary: #666;
@@ -21,7 +21,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    background-color: var(--bg-gradient-start);
     min-height: 100vh;
     color: var(--text-primary);
     transition: all 0.3s ease;
@@ -64,7 +64,7 @@ body {
 
 /* chat container */
 .chat-container {
-    background: var(--card-bg);
+    background: rgb(255, 244, 197);
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -104,16 +104,16 @@ body {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #7678ed;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #5568d3;
+    background: #7678ed;
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: #3d348b;
     color: white;
     text-decoration: none;
 }
@@ -123,8 +123,8 @@ body {
 }
 
 .btn-warning {
-    background: #ffc107;
-    color: #333;
+    background: #f35b04;
+    color: white;
 }
 
 .btn-warning:hover {
@@ -132,12 +132,12 @@ body {
 }
 
 .btn-danger, button.icon-btn {
-    background: #dc3545;
+    background: #f35b04;
     color: white;
 }
 
 .btn-danger:hover, button.icon-btn:hover {
-    background: #c82333;
+    background: #f35b04;
 }
 
 .btn-success {
@@ -150,12 +150,12 @@ body {
 }
 
 .btn-info {
-    background: #17a2b8;
+    background: #f18701;
     color: white;
 }
 
 .btn-info:hover {
-    background: #138496;
+    background: #f35b04;
 }
 
 .icon-btn {
@@ -190,7 +190,7 @@ body {
     width: 40px;
     height: 40px;
     border: 4px solid var(--border-color);
-    border-top: 4px solid #667eea;
+    border-top: 4px solid #7678ed;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 15px;
@@ -207,7 +207,7 @@ body {
 }
 
 .loading-text {
-    color: #667eea;
+    color: #7678ed;
     font-weight: 600;
 }
 
@@ -346,7 +346,7 @@ body {
         font-size: 22px;
     }
     
-    /* make form inputs more touch-friendly */
+    /* make form inputs more touch-friendly?? */
     .modal-content .form-input,
     .modal-content .form-select,
     .modal-content .form-textarea {
@@ -374,7 +374,7 @@ body {
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-    background: #667eea;
+    background: #7678ed;
     border-radius: 10px;
 }
 
@@ -400,7 +400,7 @@ body {
 }
 
 .notification.error {
-    background: #dc3545;
+    background: #f35b04;
     color: white;
 }
 
@@ -456,7 +456,7 @@ body {
     height: 20px;
     padding: 0 6px;
     margin-left: 8px;
-    background: #dc3545;
+    background: #f35b04;
     color: white;
     border-radius: 10px;
     font-size: 12px;

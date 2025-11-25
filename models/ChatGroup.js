@@ -21,7 +21,7 @@ const chatGroupSchema = new mongoose.Schema({
   }],
   color: {
     type: String,
-    default: '#667eea'
+    default: '#7678ed'
   },
   createdAt: {
     type: Date,

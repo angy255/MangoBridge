@@ -1,4 +1,4 @@
-/* login page specific styles */
+/* login page */
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -22,7 +22,7 @@
 }
 
 .login-header h1 {
-    color: #667eea;
+    color: #7678ed;
     font-size: 36px;
     margin-bottom: 10px;
 }
@@ -54,13 +54,13 @@
 
 .login-form input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #7678ed;
 }
 
 .login-btn {
     width: 100%;
     padding: 15px;
-    background: #667eea;
+    background: #7678ed;
     color: white;
     border: none;
     border-radius: 10px;
@@ -84,7 +84,7 @@
 }
 
 .login-footer a {
-    color: #667eea;
+    color: #7678ed;
     text-decoration: none;
     font-weight: 600;
 }
