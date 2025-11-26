@@ -1,4 +1,4 @@
-// group Chats functionality
+// group chats functionality
 let chatGroups = [];
 let selectedGroupId = null;
 let allUsers = [];
@@ -121,6 +121,34 @@ async function loadGroupMessages(groupId) {
     }
 }
 
+// helper function to get user avatar HTML for group messages
+function getGroupUserAvatarHTML(msg) {
+    const userAvatar = msg.userAvatar || '';
+    const userName = msg.userName || 'User';
+    
+    if (userAvatar && userAvatar.startsWith('http')) {
+        return `<img src="${userAvatar}" alt="${escapeHtml(userName)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    } else if (userAvatar && userAvatar.length > 2) {
+        return escapeHtml(userAvatar);
+    } else {
+        return userName.charAt(0).toUpperCase();
+    }
+}
+
+// helper function to get user avatar HTML for user lists
+function getUserAvatarHTML(user) {
+    const avatar = user.avatar || '';
+    const userName = user.userName || 'User';
+    
+    if (avatar && avatar.startsWith('http')) {
+        return `<img src="${avatar}" alt="${escapeHtml(userName)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    } else if (avatar && avatar.length > 2) {
+        return escapeHtml(avatar);
+    } else {
+        return userName.charAt(0).toUpperCase();
+    }
+}
+
 // render chat groups sidebar
 function renderChatGroups() {
     const container = document.getElementById('chatGroupsList');
@@ -170,6 +198,12 @@ function renderGroupMessages() {
         new Date(b.timestamp) - new Date(a.timestamp)
     );
     
+    const languageNames = {
+        en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+        zh: 'Chinese', ja: 'Japanese', pt: 'Portuguese', it: 'Italian',
+        nl: 'Dutch', pl: 'Polish', ru: 'Russian', ko: 'Korean', tr: 'Turkish'
+    };
+    
     container.innerHTML = sortedMessages.map(msg => {
         const isOwnMessage = msg.userId === currentUser.id;
         
@@ -177,6 +211,9 @@ function renderGroupMessages() {
             <div class="message-card" data-id="${msg._id}">
                 <div class="message-header">
                     <div class="user-info">
+                        <div class="user-avatar-small">
+                            ${getGroupUserAvatarHTML(msg)}
+                        </div>
                         <span class="user-name">${escapeHtml(msg.userName)}</span>
                         <span class="lang-badge">${languageNames[msg.sourceLang]}</span>
                     </div>
@@ -188,7 +225,6 @@ function renderGroupMessages() {
                 <div class="translation">
                     <div class="translation-label">Translated to ${languageNames[msg.targetLang]}</div>
                     <div class="translation-text">${escapeHtml(msg.translatedText)}</div>
-                    ${msg.aiNote ? `<div class="ai-note">${escapeHtml(msg.aiNote)}</div>` : ''}
                 </div>
                 ${isOwnMessage ? `
                     <div class="message-actions">
@@ -252,7 +288,7 @@ async function createNewGroup() {
                 <input type="checkbox" class="user-checkbox" value="${user._id}" id="user-${user._id}">
                 <label for="user-${user._id}" style="margin-left: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
                     <div class="user-avatar-small">
-                        ${user.userName?.[0]?.toUpperCase() || 'U'}
+                        ${getUserAvatarHTML(user)}
                     </div>
                     <a href="/profile/${user._id}" style="color: inherit; text-decoration: none; font-weight: 500;" onclick="event.stopPropagation();">
                         ${escapeHtml(user.userName)}
@@ -400,6 +436,12 @@ async function previewGroupTranslation() {
         return;
     }
     
+    const languageNames = {
+        en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+        zh: 'Chinese', ja: 'Japanese', pt: 'Portuguese', it: 'Italian',
+        nl: 'Dutch', pl: 'Polish', ru: 'Russian', ko: 'Korean', tr: 'Turkish'
+    };
+    
     try {
         const response = await fetch(`${API_URL}/meetings/translate`, {
             method: 'POST',
@@ -419,7 +461,7 @@ async function previewGroupTranslation() {
             }
             
             preview.innerHTML = `
-                <div class="preview-header">📋 Translation Preview:</div>
+                <div class="preview-header">Translation Preview:</div>
                 <div class="preview-content">
                     <div style="margin-bottom: 10px;">
                         <strong>Original (${languageNames[sourceLang]}):</strong><br>
@@ -520,7 +562,7 @@ async function manageGroupMembers() {
         <div class="member-item">
             <div style="display: flex; align-items: center;">
                 <div class="user-avatar-small">
-                    ${member.userName?.[0]?.toUpperCase() || 'U'}
+                    ${getUserAvatarHTML(member)}
                 </div>
                 <a href="/profile/${member._id}" style="color: inherit; text-decoration: none; font-weight: 500; margin-left: 10px;" onclick="event.stopPropagation();">
                     ${escapeHtml(member.userName || 'Unknown User')}
@@ -547,7 +589,7 @@ async function manageGroupMembers() {
             <div class="user-item">
                 <div style="display: flex; align-items: center;">
                     <div class="user-avatar-small">
-                        ${user.userName?.[0]?.toUpperCase() || 'U'}
+                        ${getUserAvatarHTML(user)}
                     </div>
                     <a href="/profile/${user._id}" style="color: inherit; text-decoration: none; font-weight: 500; margin-left: 10px;" onclick="event.stopPropagation();">
                         ${escapeHtml(user.userName)}
@@ -617,16 +659,16 @@ async function removeMember(userId) {
 async function closeMembersModal() {
     document.getElementById('manageMembersModal').classList.remove('active');
     
-    // Reload group data to reflect changes
+    // reload group data to reflect changes
     await loadChatGroups();
     
-    // If a group is selected, refresh its view
+    // if a group is selected, refresh its view
     if (selectedGroupId) {
         await selectGroup(selectedGroupId);
     }
 }
 
-// delete current group - FIXED VERSION WITH AUTO-REFRESH
+// delete current group 
 async function deleteCurrentGroup() {
     if (!selectedGroupId) return;
     

@@ -114,6 +114,22 @@
     gap: 10px;
 }
 
+/* user avatar in message cards */
+.user-avatar-small {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
 .user-name {
     font-weight: 600;
     color: #f35b04;
@@ -129,7 +145,7 @@
 }
 
 .timestamp {
-    color: black;
+    color: #3d348b;
     font-size: 12px;
 }
 
@@ -140,20 +156,20 @@
 }
 
 .message-text strong {
-    color: black;
+    color: #3d348b;
 }
 
 .translation {
     background: #ffe17e;
     padding: 15px;
     border-radius: 8px;
-    border-left: 4px solid black;
+    border-left: 4px solid #F18701;
     margin-top: 10px;
 }
 
 .translation-label {
     font-size: 12px;
-    color: black;
+    color: #3d348b;
     font-weight: 600;
     margin-bottom: 8px;
 }
@@ -163,16 +179,16 @@
     line-height: 1.6;
 }
 
-.ai-note {
+/* .ai-note {
     margin-top: 10px;
     padding: 10px;
-    background: black;
+    color: #3d348b;
+    font-weight: bold;
     border-radius: 6px;
     font-size: 13px;
-    color: white;
     font-style: italic;
     width: fit-content;
-}
+} */
 
 .message-actions {
     display: flex;

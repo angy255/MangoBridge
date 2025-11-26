@@ -58,13 +58,7 @@ function renderMeetingSummaries(summaries) {
                 </button>
             </div>
             <div class="summary-meta">
-                <span> Meeting: ${new Date(summary.meetingDate).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                })}</span>
-                <span> Generated: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
+                <span> Meeting: ${new Date(summary.generatedAt).toLocaleString('en-US', { 
                     month: 'short', 
                     day: 'numeric', 
                     year: 'numeric',
@@ -77,7 +71,7 @@ function renderMeetingSummaries(summaries) {
             </div>
             ${summary.transcript ? `
                 <details style="margin-top: 15px;">
-                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: black; border-radius: 5px; width: max-content;">
+                    <summary style="cursor: pointer; color: #3d348b; font-weight: 600; padding: 10px; border-radius: 5px; width: max-content;">
                         View Full Transcript
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">
@@ -87,7 +81,7 @@ function renderMeetingSummaries(summaries) {
             ` : ''}
             ${summary.translatedTranscript ? `
                 <details style="margin-top: 10px;">
-                    <summary style="cursor: pointer; color: #667eea; font-weight: 600; padding: 10px; background: black; border-radius: 5px; width: max-content;">
+                    <summary style="cursor: pointer; color: #3d348b; font-weight: 600; padding: 10px; border-radius: 5px; width: max-content;">
                         View Translation
                     </summary>
                     <div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; line-height: 1.6; white-space: pre-wrap;">

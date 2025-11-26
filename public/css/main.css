@@ -23,7 +23,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-gradient-start);
     min-height: 100vh;
-    color: var(--text-primary);
+    color:#3d348b;
     transition: all 0.3s ease;
 }
 
@@ -76,11 +76,11 @@ body {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid white;
 }
 
 .chat-header h2 {
-    color: var(--text-primary);
+    color: #3d348b;
     font-size: 24px;
 }
 
@@ -271,7 +271,7 @@ body {
 }
 
 .modal-header h3 {
-    color: var(--text-primary);
+    color: #7678ed;
     font-size: 24px;
     margin: 0;
 }

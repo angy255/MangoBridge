@@ -31,7 +31,7 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-// Create new chat group with members
+// create new chat group with members
 router.post('/', requireAuth, async (req, res) => {
   try {
     const { name, color, memberIds } = req.body;
@@ -94,9 +94,19 @@ router.get('/:id/messages', requireAuth, async (req, res) => {
       _id: { $in: group.messageThreads }
     }).sort({ timestamp: 1 });
 
+    // enrich messages with user avatar data
+    const enrichedMessages = await Promise.all(messages.map(async (msg) => {
+      const user = await User.findById(msg.userId).select('avatar userName');
+      return {
+        ...msg.toObject(),
+        userAvatar: user ? user.avatar : '',
+        userName: user ? user.userName : msg.userName
+      };
+    }));
+
     res.json({
       success: true,
-      data: messages
+      data: enrichedMessages
     });
   } catch (error) {
     console.error('Error fetching group messages:', error);
@@ -272,7 +282,7 @@ router.post('/:id/remove-member', requireAuth, async (req, res) => {
 
     const group = await ChatGroup.findOne({
       _id: req.params.id,
-      createdBy: req.user._id // Only creator can remove members
+      createdBy: req.user._id //only creator can remove members
     });
 
     if (!group) {

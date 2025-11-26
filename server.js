@@ -80,12 +80,12 @@ console.log('   - /api/meetings');
 console.log('   - /api/chatgroups');
 console.log('   - /api/users');
 
-// main route
+// main route 
 app.get('/', (req, res) => {
   if (req.isAuthenticated()) {
     res.render('index', { 
       user: {
-        id: req.user._id,
+        id: req.user._id.toString(), 
         email: req.user.email,
         name: req.user.name,
         userName: req.user.userName,

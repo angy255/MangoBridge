@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
 const ChatGroup = require('../models/ChatGroup');
+const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
 const { translateMessage } = require('../services/translationService');
 
@@ -33,10 +34,31 @@ router.get('/all', requireAuth, async (req, res) => {
       return !isGroupMessage && !isArchivedByUser && !isDeletedForUser;
     });
     
+    // enrich messages with user avatar data 
+    const enrichedMessages = await Promise.all(messages.map(async (msg) => {
+      try {
+        const user = await User.findById(msg.userId).select('avatar userName');
+        const msgObj = msg.toObject();
+        
+        // add userAvatar to the message object
+        msgObj.userAvatar = user ? user.avatar : '';
+        
+        // ensure userName is set (fallback to user.userName if needed)
+        if (!msgObj.userName && user) {
+          msgObj.userName = user.userName;
+        }
+        
+        return msgObj;
+      } catch (err) {
+        console.error(`Error enriching message ${msg._id}:`, err);
+        return msg.toObject();
+      }
+    }));
+    
     res.json({
       success: true,
-      count: messages.length,
-      data: messages
+      count: enrichedMessages.length,
+      data: enrichedMessages
     });
   } catch (error) {
     console.error('Error fetching all messages:', error);
@@ -56,17 +78,28 @@ router.get('/', requireAuth, async (req, res) => {
       .sort({ timestamp: -1 })
       .limit(100);
     
-    // Filter out messages archived by current user or deleted for user
+    // filter out messages archived by current user or deleted for user
     const messages = allMessages.filter(msg => {
       const isArchived = msg.archivedBy && msg.archivedBy.get(req.user._id.toString()) === true;
       const isDeleted = msg.deletedFor && msg.deletedFor.includes(req.user._id.toString());
       return !isArchived && !isDeleted;
     });
     
+    // enrich with avatar
+    const enrichedMessages = await Promise.all(messages.map(async (msg) => {
+      const user = await User.findById(msg.userId).select('avatar userName');
+      const msgObj = msg.toObject();
+      msgObj.userAvatar = user ? user.avatar : '';
+      if (!msgObj.userName && user) {
+        msgObj.userName = user.userName;
+      }
+      return msgObj;
+    }));
+    
     res.json({
       success: true,
-      count: messages.length,
-      data: messages
+      count: enrichedMessages.length,
+      data: enrichedMessages
     });
   } catch (error) {
     console.error('Error fetching messages:', error);
@@ -106,9 +139,20 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
       return userThreads.has(threadId) && !isArchivedByUser && !isDeletedForUser;
     });
     
+    // enrich with avatar
+    const enrichedMessages = await Promise.all(relevantMessages.map(async (msg) => {
+      const user = await User.findById(msg.userId).select('avatar userName');
+      const msgObj = msg.toObject();
+      msgObj.userAvatar = user ? user.avatar : '';
+      if (!msgObj.userName && user) {
+        msgObj.userName = user.userName;
+      }
+      return msgObj;
+    }));
+    
     res.json({
       success: true,
-      data: relevantMessages
+      data: enrichedMessages
     });
   } catch (error) {
     console.error('Error fetching unread threads:', error);
@@ -119,7 +163,7 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
   }
 });
 
-// GET /archived - Get archived messages for current user only
+// GET /archived - get archived messages for current user only
 router.get('/archived', requireAuth, async (req, res) => {
   try {
     const messages = await Message.find({})
@@ -132,9 +176,20 @@ router.get('/archived', requireAuth, async (req, res) => {
       return isArchived && !isDeleted;
     });
     
+    // enrich with avatar
+    const enrichedMessages = await Promise.all(archivedMessages.map(async (msg) => {
+      const user = await User.findById(msg.userId).select('avatar userName');
+      const msgObj = msg.toObject();
+      msgObj.userAvatar = user ? user.avatar : '';
+      if (!msgObj.userName && user) {
+        msgObj.userName = user.userName;
+      }
+      return msgObj;
+    }));
+    
     res.json({
       success: true,
-      data: archivedMessages
+      data: enrichedMessages
     });
   } catch (error) {
     console.error('Error fetching archived messages:', error);

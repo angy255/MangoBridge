@@ -89,13 +89,14 @@ function renderHomeMessages() {
     container.innerHTML = parentMessages.map(msg => {
         const replies = messages.filter(r => r.parentMessageId === msg._id);
         
-        const isOwnMessage = msg.userId === currentUser.id;
+        // convert both to strings for comparison
+        const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
         let html = createMessageCard(msg, true, false, isOwnMessage, true);
         
         if (replies.length > 0) {
             html += '<div class="replies-container">';
             replies.forEach(reply => {
-                const isOwnReply = reply.userId === currentUser.id;
+                const isOwnReply = reply.userId.toString() === currentUser.id.toString();
                 html += createMessageCard(reply, false, false, isOwnReply, false, false, true);
             });
             html += '</div>';
@@ -105,7 +106,7 @@ function renderHomeMessages() {
     }).join('');
 }
 
-// render archived messages - NO EDIT/DELETE BUTTONS
+// render archived messages - no edit or delete buttons
 function renderArchivedMessages(archivedMessages) {
     const container = document.getElementById('archivedMessageList');
     const emptyState = document.getElementById('archivedEmptyState');
@@ -128,7 +129,7 @@ function renderArchivedMessages(archivedMessages) {
     container.innerHTML = parentMessages.map(msg => {
         const replies = archivedMessages.filter(r => r.parentMessageId === msg._id);
         
-        // NO action buttons in archived tab
+        // no action buttons in archived tab
         let html = createMessageCard(msg, false, false, false, false, true);
         
         if (replies.length > 0) {
@@ -143,9 +144,24 @@ function renderArchivedMessages(archivedMessages) {
     }).join('');
 }
 
+// helper function to get user avatar HTML 
+function getUserAvatarHTML(msg) {
+    // use userAvatar from the enriched message data
+    const userAvatar = msg.userAvatar || '';
+    const userName = msg.userName || 'User';
+        
+    if (userAvatar && userAvatar.startsWith('http')) {
+        return `<img src="${userAvatar}" alt="${escapeHtml(userName)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    } else if (userAvatar && userAvatar.length > 2) {
+        return escapeHtml(userAvatar);
+    } else {
+        return userName.charAt(0).toUpperCase();
+    }
+}
+
 // create message card HTML
 function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, showActions = false, showReply = false, isArchived = false, isReply = false) {
-    const isOwnMessage = msg.userId === currentUser.id;
+    const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
     const isEditing = editingMessageId === msg._id;
     const isReplying = replyingToMessageId === msg._id;
     
@@ -158,6 +174,9 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
             ` : '<div style="width: 100%;">'}
             <div class="message-header">
                 <div class="user-info">
+                    <div class="user-avatar-small">
+                        ${getUserAvatarHTML(msg)}
+                    </div>
                     <span class="user-name">${escapeHtml(msg.userName)}</span>
                     <span class="lang-badge">${languageNames[msg.sourceLang]}</span>
                 </div>
@@ -172,7 +191,6 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
             <div class="translation">
                 <div class="translation-label">Translated to ${languageNames[msg.targetLang]}</div>
                 <div class="translation-text">${escapeHtml(msg.translatedText)}</div>
-                ${msg.aiNote ? `<div class="ai-note">${escapeHtml(msg.aiNote)}</div>` : ''}
             </div>
             ${markAsReadBtn && !isReplying ? `
                 <div class="message-actions">
@@ -477,7 +495,7 @@ function cancelReply() {
 
 async function deleteMessage(id) {
     const msg = messages.find(m => m._id === id);
-    const isOwnMessage = msg && msg.userId === currentUser.id;
+    const isOwnMessage = msg && msg.userId.toString() === currentUser.id.toString();
     
     const confirmText = isOwnMessage 
         ? 'Permanently delete this message? This cannot be undone and will be removed for everyone.'
