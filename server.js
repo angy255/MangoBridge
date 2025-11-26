@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
       }
     });
   } else {
-    res.render('landing', { title: 'MangoBridge - Multilingual Team Chat' }); 
+    res.render('landing', { title: 'MangoBridge - Multilingual Work Platform' }); 
   }
 });
 
