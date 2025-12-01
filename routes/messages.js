@@ -41,19 +41,23 @@ router.get('/all', requireAuth, async (req, res) => {
         const msgObj = msg.toObject();
         
         // add userAvatar to the message object
-        msgObj.userAvatar = user ? user.avatar : '';
+        msgObj.userAvatar = user && user.avatar ? user.avatar : '';
         
         // ensure userName is set (fallback to user.userName if needed)
         if (!msgObj.userName && user) {
           msgObj.userName = user.userName;
         }
-        
+                
         return msgObj;
       } catch (err) {
         console.error(`Error enriching message ${msg._id}:`, err);
-        return msg.toObject();
+        const msgObj = msg.toObject();
+        msgObj.userAvatar = '';
+        return msgObj;
       }
     }));
+    
+    console.log(`Sending ${enrichedMessages.length} messages with avatars`);
     
     res.json({
       success: true,
@@ -69,7 +73,7 @@ router.get('/all', requireAuth, async (req, res) => {
   }
 });
 
-// GET / - Get user's own messages only (excluding archived)
+// GET user's own messages only (excluding archived)
 router.get('/', requireAuth, async (req, res) => {
   try {
     const allMessages = await Message.find({ 
@@ -89,7 +93,7 @@ router.get('/', requireAuth, async (req, res) => {
     const enrichedMessages = await Promise.all(messages.map(async (msg) => {
       const user = await User.findById(msg.userId).select('avatar userName');
       const msgObj = msg.toObject();
-      msgObj.userAvatar = user ? user.avatar : '';
+      msgObj.userAvatar = user && user.avatar ? user.avatar : '';
       if (!msgObj.userName && user) {
         msgObj.userName = user.userName;
       }
@@ -110,7 +114,7 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-// GET /unread-threads - Get unread message threads where user is involved
+// GET /unread-threads - get unread message threads where user is involved
 router.get('/unread-threads', requireAuth, async (req, res) => {
   try {
     const allMessages = await Message.find({}).sort({ timestamp: -1 });
@@ -143,7 +147,7 @@ router.get('/unread-threads', requireAuth, async (req, res) => {
     const enrichedMessages = await Promise.all(relevantMessages.map(async (msg) => {
       const user = await User.findById(msg.userId).select('avatar userName');
       const msgObj = msg.toObject();
-      msgObj.userAvatar = user ? user.avatar : '';
+      msgObj.userAvatar = user && user.avatar ? user.avatar : '';
       if (!msgObj.userName && user) {
         msgObj.userName = user.userName;
       }
@@ -180,11 +184,10 @@ router.get('/archived', requireAuth, async (req, res) => {
     const enrichedMessages = await Promise.all(archivedMessages.map(async (msg) => {
       const user = await User.findById(msg.userId).select('avatar userName');
       const msgObj = msg.toObject();
-      msgObj.userAvatar = user ? user.avatar : '';
+      msgObj.userAvatar = user && user.avatar ? user.avatar : '';
       if (!msgObj.userName && user) {
         msgObj.userName = user.userName;
       }
-      return msgObj;
     }));
     
     res.json({
@@ -200,7 +203,7 @@ router.get('/archived', requireAuth, async (req, res) => {
   }
 });
 
-// POST / - Create new message
+// POST / - create new message
 router.post('/', requireAuth, async (req, res) => {
   try {
     const { sourceLang, targetLang, originalText } = req.body;
@@ -448,7 +451,6 @@ router.post('/delete-archived', requireAuth, async (req, res) => {
 // POST /clear-archived 
 router.post('/clear-archived', requireAuth, async (req, res) => {
   try {
-    console.log(`User ${req.user._id} clearing their archived messages (legacy endpoint)`);
     
     const allMessages = await Message.find({});
     
@@ -476,9 +478,7 @@ router.post('/clear-archived', requireAuth, async (req, res) => {
       );
       deletedCount++;
     }
-    
-    console.log(`✓ Cleared ${deletedCount} archived messages`);
-    
+        
     res.json({
       success: true,
       deletedCount: deletedCount,
@@ -520,7 +520,6 @@ router.delete('/:id', requireAuth, async (req, res) => {
     // delete any replies to this message
     await Message.deleteMany({ parentMessageId: req.params.id });
 
-    console.log(`✓ Message ${req.params.id} deleted successfully`);
     res.json({ 
       success: true,
       message: 'Message deleted successfully'

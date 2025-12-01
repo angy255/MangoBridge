@@ -19,7 +19,7 @@
 }
 
 .form-label {
-    margin-bottom: 8px;
+    margin: 8px;
     font-weight: 600;
     color: var(--text-secondary);
     font-size: 14px;
@@ -110,7 +110,7 @@
     line-height: 1.6;
 }
 
-/* reply form specific styling */
+/* reply form */
 .reply-form {
     background: #e8f5e9;
     padding: 20px;

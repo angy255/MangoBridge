@@ -135,8 +135,8 @@ function getGroupUserAvatarHTML(msg) {
     }
 }
 
-// helper function to get user avatar HTML for user lists
-function getUserAvatarHTML(user) {
+// helper function to get user object avatar HTML (for user lists in modals)
+function getUserObjectAvatarHTML(user) {
     const avatar = user.avatar || '';
     const userName = user.userName || 'User';
     
@@ -288,7 +288,7 @@ async function createNewGroup() {
                 <input type="checkbox" class="user-checkbox" value="${user._id}" id="user-${user._id}">
                 <label for="user-${user._id}" style="margin-left: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
                     <div class="user-avatar-small">
-                        ${getUserAvatarHTML(user)}
+                        ${getUserObjectAvatarHTML(user)}
                     </div>
                     <a href="/profile/${user._id}" style="color: inherit; text-decoration: none; font-weight: 500;" onclick="event.stopPropagation();">
                         ${escapeHtml(user.userName)}
@@ -562,7 +562,7 @@ async function manageGroupMembers() {
         <div class="member-item">
             <div style="display: flex; align-items: center;">
                 <div class="user-avatar-small">
-                    ${getUserAvatarHTML(member)}
+                    ${getUserObjectAvatarHTML(member)}
                 </div>
                 <a href="/profile/${member._id}" style="color: inherit; text-decoration: none; font-weight: 500; margin-left: 10px;" onclick="event.stopPropagation();">
                     ${escapeHtml(member.userName || 'Unknown User')}
@@ -589,7 +589,7 @@ async function manageGroupMembers() {
             <div class="user-item">
                 <div style="display: flex; align-items: center;">
                     <div class="user-avatar-small">
-                        ${getUserAvatarHTML(user)}
+                        ${getUserObjectAvatarHTML(user)}
                     </div>
                     <a href="/profile/${user._id}" style="color: inherit; text-decoration: none; font-weight: 500; margin-left: 10px;" onclick="event.stopPropagation();">
                         ${escapeHtml(user.userName)}

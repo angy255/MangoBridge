@@ -12,6 +12,12 @@ const languageNames = {
     nl: 'Dutch', pl: 'Polish', ru: 'Russian', ko: 'Korean', tr: 'Turkish'
 };
 
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // update unread badge
 function updateUnreadBadge() {
     const badge = document.getElementById('unreadBadge');
@@ -41,6 +47,9 @@ async function loadMessages() {
         if (data.success) {
             messages = data.data;
             console.log(`Loaded ${messages.length} messages (after filtering)`);
+            if (messages.length > 0) {
+                console.log('userAvatar field specifically:', messages[0].userAvatar);
+            }
             renderHomeMessages();
             updateUnreadBadge();
         }
@@ -59,6 +68,10 @@ async function loadArchivedMessages() {
         const data = await response.json();
         
         if (data.success) {
+            console.log('Archived messages loaded:', data.data.length);
+            if (data.data.length > 0) {
+                console.log('Sample archived message:', data.data[0]);
+            }
             renderArchivedMessages(data.data);
         }
     } catch (error) {
@@ -89,7 +102,6 @@ function renderHomeMessages() {
     container.innerHTML = parentMessages.map(msg => {
         const replies = messages.filter(r => r.parentMessageId === msg._id);
         
-        // convert both to strings for comparison
         const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
         let html = createMessageCard(msg, true, false, isOwnMessage, true);
         
@@ -129,7 +141,6 @@ function renderArchivedMessages(archivedMessages) {
     container.innerHTML = parentMessages.map(msg => {
         const replies = archivedMessages.filter(r => r.parentMessageId === msg._id);
         
-        // no action buttons in archived tab
         let html = createMessageCard(msg, false, false, false, false, true);
         
         if (replies.length > 0) {
@@ -144,26 +155,33 @@ function renderArchivedMessages(archivedMessages) {
     }).join('');
 }
 
-// helper function to get user avatar HTML 
+// helper function to get user avatar HTML (matches group chat version)
 function getUserAvatarHTML(msg) {
-    // use userAvatar from the enriched message data
     const userAvatar = msg.userAvatar || '';
     const userName = msg.userName || 'User';
-        
+    
     if (userAvatar && userAvatar.startsWith('http')) {
-        return `<img src="${userAvatar}" alt="${escapeHtml(userName)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-    } else if (userAvatar && userAvatar.length > 2) {
+        const html = `<img src="${userAvatar}" alt="${escapeHtml(userName)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        console.log('Returning img tag:', html);
+        return html;
+    } else if (userAvatar && userAvatar.length > 2 && !userAvatar.startsWith('http')) {
+        console.log('Returning text avatar:', userAvatar);
         return escapeHtml(userAvatar);
     } else {
-        return userName.charAt(0).toUpperCase();
+        const fallback = userName.charAt(0).toUpperCase();
+        console.log('Returning fallback letter:', fallback);
+        return fallback;
     }
 }
 
 // create message card HTML
 function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, showActions = false, showReply = false, isArchived = false, isReply = false) {
+    
     const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
     const isEditing = editingMessageId === msg._id;
     const isReplying = replyingToMessageId === msg._id;
+    
+    const avatarHTML = getUserAvatarHTML(msg);
     
     return `
         <div class="message-card ${!msg.isRead ? 'unread' : ''} ${isReply ? 'reply-card' : ''} ${selectedMessages.has(msg._id) ? 'selected' : ''}" data-id="${msg._id}">
@@ -269,12 +287,6 @@ function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, sho
             ${showCheckbox ? '</div></div>' : '</div>'}
         </div>
     `;
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 function toggleMessageSelection(id) {
@@ -534,12 +546,10 @@ async function clearArchived() {
             const data = await response.json();
             
             if (data.success) {
-                // clear archived view
                 document.getElementById('archivedMessageList').innerHTML = '';
                 const emptyState = document.getElementById('archivedEmptyState');
                 if (emptyState) emptyState.style.display = 'block';
                 
-                // reload home messages
                 await loadMessages();
                 
                 showNotification(
@@ -552,7 +562,6 @@ async function clearArchived() {
                 throw new Error(data.error || 'Failed to clear archived messages');
             }
         } catch (error) {
-            console.error('Error clearing archived:', error);
             showNotification('Error clearing archived messages', 'error');
         }
     });
