@@ -188,6 +188,7 @@ router.get('/archived', requireAuth, async (req, res) => {
       if (!msgObj.userName && user) {
         msgObj.userName = user.userName;
       }
+      return msgObj;
     }));
     
     res.json({
