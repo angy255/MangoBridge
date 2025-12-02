@@ -134,6 +134,7 @@ body.dark-mode .hamburger span {
     display: flex;
     align-items: center;
     gap: 15px;
+    margin-left: 20px;
 }
 
 .user-menu {
@@ -395,7 +396,7 @@ body.dark-mode .hamburger span {
 
 /* ============================================
    LANDSCAPE TABLET OPTIMIZATION
-   For devices like iPad in landscape mode
+   for iPad in landscape mode
    ============================================ */
 @media (max-width: 1230px) and (orientation: landscape) {
     .nav-links {

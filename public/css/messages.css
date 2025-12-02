@@ -40,6 +40,9 @@
     transition: all 0.2s ease;
     position: relative;
     border-left: 4px solid #3d348b;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .message-card:hover {
@@ -106,12 +109,17 @@
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .user-info {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+    flex: 1;
 }
 
 /* user avatar in message cards */
@@ -134,6 +142,8 @@
     font-weight: 600;
     color: #f35b04;
     font-size: 20px;
+    word-break: break-word;
+    min-width: 0;
 }
 
 .lang-badge {
@@ -142,17 +152,24 @@
     padding: 3px 10px;
     border-radius: 12px;
     font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .timestamp {
     color: #3d348b;
     font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .message-text {
     margin: 15px 0;
     color: var(--text-primary);
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .message-text strong {
@@ -160,11 +177,14 @@
 }
 
 .translation {
-    background: #ffe17e;
+    background: rgb(255, 244, 197);
     padding: 15px;
     border-radius: 8px;
     border-left: 4px solid #F18701;
     margin-top: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .translation-label {
@@ -177,18 +197,9 @@
 .translation-text {
     color: var(--text-primary);
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
-
-/* .ai-note {
-    margin-top: 10px;
-    padding: 10px;
-    color: #3d348b;
-    font-weight: bold;
-    border-radius: 6px;
-    font-size: 13px;
-    font-style: italic;
-    width: fit-content;
-} */
 
 .message-actions {
     display: flex;
@@ -204,6 +215,9 @@
     border-radius: 10px;
     padding: 20px;
     margin: 15px 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .translation-preview.active {
@@ -221,17 +235,40 @@
     padding: 15px;
     border-radius: 8px;
     margin-top: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 @media (max-width: 768px) {
+    .message-list {
+        padding: 10px;
+    }
+
+    .message-card {
+        padding: 15px;
+    }
+
     .message-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
 
+    .user-info {
+        width: 100%;
+    }
+
+    .timestamp {
+        align-self: flex-start;
+    }
+
+    .user-name {
+        font-size: 18px;
+    }
+
     .message-actions {
         flex-direction: column;
+        width: 100%;
     }
 
     .message-actions .btn {
@@ -240,5 +277,47 @@
 
     .reply-card {
         margin-left: 20px;
+        padding: 12px;
+    }
+
+    .translation {
+        padding: 12px;
+    }
+
+    .reply-form {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .message-list {
+        padding: 5px;
+    }
+
+    .message-card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .reply-card {
+        margin-left: 10px;
+        padding: 10px;
+    }
+
+    .user-name {
+        font-size: 16px;
+    }
+
+    .message-text,
+    .translation-text {
+        font-size: 14px;
+    }
+
+    .translation {
+        padding: 10px;
+    }
+
+    .reply-form {
+        padding: 12px;
     }
 }

@@ -174,7 +174,7 @@ if (nextMonthBtn) {
     });
 }
 
-// open event modal (ADD ONLY)
+// open event modal (add only)
 function openEventModal(date) {
     selectedDate = date;
     
@@ -408,3 +408,4 @@ if (eventModal) {
 }
 
 console.log('✅ calendar.js loaded successfully');
+

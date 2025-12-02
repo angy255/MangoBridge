@@ -1,7 +1,19 @@
-/* calendar styles */
+/* making sure there's no overflow at calendar level */
+#calendar {
+    overflow-x: hidden;
+}
+
+.calendar-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+}
+
 .calendar-container {
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     width: 100%;
     overflow: hidden;
@@ -18,17 +30,18 @@
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
     width: 100%;
 }
 
 .calendar-day {
-    aspect-ratio: 1;
+    aspect-ratio: 1 / 1;
+    width: 100%;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 6px;
+    padding: 8px 4px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
@@ -38,6 +51,7 @@
     font-weight: 500;
     overflow: hidden;
     word-break: break-word;
+    font-size: 14px;
 }
 
 .calendar-day:hover {
@@ -58,13 +72,13 @@
 
 .event-indicator {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
-    min-width: 18px;
-    height: 18px;
+    bottom: 3px;
+    right: 3px;
+    min-width: 16px;
+    height: 16px;
     background: #28a745;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
     color: white;
     display: flex;
@@ -73,13 +87,16 @@
     padding: 2px;
 }
 
-/* day taskbar (side panel) */
+/* ============================================
+   DAY TASKBAR (SIDE PANEL)
+   ============================================ */
 .day-taskbar {
     max-height: 600px;
     overflow-y: auto;
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
+    width: 100%;
 }
 
 .taskbar-event-item {
@@ -113,7 +130,9 @@
     flex-wrap: wrap;
 }
 
-/* event list */
+/* ============================================
+   EVENT LIST
+   ============================================ */
 .event-list {
     margin-top: 20px;
 }
@@ -157,17 +176,20 @@
     gap: 10px;
 }
 
-/* calendar wrapper responsive layout */
-#calendar .chat-container > div:first-of-type {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
+.icon-btn {
+    font-weight: bold;
 }
 
-/* tablet breakpoint */
+/* ============================================
+   TABLET BREAKPOINT (1024px and below)
+   ============================================ */
 @media (max-width: 1024px) {
-    #calendar .chat-container > div:first-of-type {
+    .calendar-wrapper {
         grid-template-columns: 1fr;
+    }
+    
+    .calendar-container {
+        padding: 12px;
     }
     
     .calendar-header {
@@ -176,12 +198,12 @@
     }
     
     .calendar-grid {
-        gap: 8px;
+        gap: 6px;
     }
     
     .calendar-day {
-        font-size: 14px;
-        padding: 8px;
+        font-size: 13px;
+        padding: 6px 3px;
     }
     
     .day-taskbar {
@@ -189,17 +211,17 @@
     }
 }
 
-/* mobile breakpoint */
+/* ============================================
+   MOBILE BREAKPOINT (768px and below)
+   ============================================ */
 @media (max-width: 768px) {
-    #calendar .chat-container > div:first-of-type {
+    .calendar-wrapper {
         grid-template-columns: 1fr !important;
         gap: 15px;
     }
     
     .calendar-container {
-        padding: 15px;
-        width: 100%;
-        max-width: 100%;
+        padding: 10px;
     }
     
     .calendar-header {
@@ -210,6 +232,7 @@
     .calendar-header h2 {
         font-size: 20px;
         margin: 0;
+        padding: 12px !important;
     }
     
     .calendar-header div {
@@ -225,13 +248,13 @@
     
     .calendar-grid {
         gap: 4px;
-        width: 100%;
+        margin-bottom: 15px;
     }
 
     .calendar-day {
-        font-size: 11px;
-        padding: 4px;
-        min-height: 35px;
+        font-size: 12px;
+        padding: 4px 2px;
+        border-radius: 4px;
     }
     
     .event-indicator {
@@ -253,10 +276,7 @@
         justify-content: flex-end;
     }
     
-    /* make day taskbar full width on mobile */
     .day-taskbar {
-        width: 100%;
-        max-width: 100%;
         max-height: 350px;
         padding: 15px;
     }
@@ -274,30 +294,35 @@
     }
 }
 
-/* small mobile breakpoint */
+/* ============================================
+   SMALL MOBILE BREAKPOINT (480px and below)
+   ============================================ */
 @media (max-width: 480px) {
     .calendar-container {
-        padding: 10px;
+        padding: 8px;
+        border-radius: 8px;
     }
     
     .calendar-header h2 {
-        font-size: 16px;
+        font-size: 18px;
+        padding: 10px 14px !important;
     }
     
     .calendar-header button {
         padding: 6px 10px;
-        font-size: 11px;
+        font-size: 12px;
     }
     
     .calendar-grid {
-        gap: 2px;
+        gap: 3px;
+        margin-bottom: 10px;
     }
     
     .calendar-day {
-        font-size: 10px;
-        padding: 2px;
-        min-height: 30px;
-        border-radius: 4px;
+        font-size: 11px;
+        padding: 3px 1px;
+        border-radius: 3px;
+        border-width: 1px;
     }
     
     .event-indicator {
@@ -319,13 +344,92 @@
     }
 }
 
-/* ensure calendar container never overflows */
-#calendar .chat-container {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+/* ============================================
+   EXTRA SMALL MOBILE (375px and below)
+   iPhone SE specifically
+   ============================================ */
+@media (max-width: 375px) {
+    .calendar-container {
+        padding: 6px;
+    }
+    
+    .calendar-header {
+        gap: 8px;
+    }
+    
+    .calendar-header h2 {
+        font-size: 16px;
+        padding: 8px 12px !important;
+    }
+    
+    .calendar-header button {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+    
+    .calendar-header span {
+        margin: 0 8px !important;
+        font-size: 13px;
+    }
+    
+    .calendar-grid {
+        gap: 2px;
+        margin-bottom: 8px;
+    }
+    
+    .calendar-day {
+        font-size: 10px;
+        padding: 2px 1px;
+        border-radius: 3px;
+        border-width: 1px;
+    }
+    
+    .event-indicator {
+        min-width: 10px;
+        height: 10px;
+        font-size: 7px;
+        bottom: 1px;
+        right: 1px;
+        padding: 1px;
+    }
 }
 
-.icon-btn {
-    font-weight: bold;
+  /* calendar Footer - Outside chat container */
+.calendar-footer {
+    margin-top: 20px;
+    margin-bottom: 6px;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    background: transparent;
+}
+
+.calendar-footer a {
+    color: #7678ed;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 500;
+}
+
+.calendar-footer a:hover {
+    color: #5568d3;
+}
+
+.footer-divider {
+    margin: 0 10px;
+    color: #999;
+}
+
+/* responsive footer */
+@media (max-width: 480px) {
+    .calendar-footer {
+        font-size: 12px;
+        padding: 12px 15px;
+        margin-top: 15px;
+    }
+    
+    .footer-divider {
+        margin: 0 8px;
+    }
 }

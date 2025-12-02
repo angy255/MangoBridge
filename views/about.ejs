@@ -6,9 +6,9 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🥭</text></svg>">
     <script src="https://kit.fontawesome.com/66a5eab7b2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/landing.css">
-    <title>MangoBridge - Multilingual Work Platform</title>
+    <title>About - MangoBridge</title>
     <style>
-        /* language selector in header */
+        /* Language Selector in Header */
         .language-selector {
             position: relative;
             margin-left: 20px;
@@ -165,7 +165,7 @@
                 <a href="mailto:support@mangobridge.com">Contact Us</a>
                 <a href="/login">Login</a>
                 <a href="/signup">Sign Up</a>
-
+            
             <!-- language selector -->
             <div class="language-selector">
                 <button class="language-toggle" onclick="toggleLanguageMenu()">
@@ -232,93 +232,39 @@
     </header>
 
     <div class="landing-container">
-        <!-- logo & login -->
-        <div class="main-content">
-            <div class="logo-section">
-                <div class="logo-container">
-                    <img src="/images2/mangobridge-logo.png" alt="MangoBridge Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div class="logo-text" style="display:none;">
-                        <span class="logo-name">MangoBridge</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="login-section">
-                <div class="login-header">
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to your account</p>
-                </div>
-                
-                <form action="/login" method="POST" class="login-form">
-                    <div class="form-group">
-                        <label>Email address</label>
-                        <input 
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email" 
-                            required
-                            autocomplete="email"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input 
-                            type="password"
-                            name="password"
-                            placeholder="Enter your password" 
-                            required
-                            autocomplete="current-password"
-                        >
-                    </div>
-                    <button type="submit" class="login-btn">Login</button>
-                </form>
-                
-                <div class="login-footer">
-                    <p>Don't have an account? <a href="/signup">Sign up here</a></p>
-                </div>
-            </div>
-        </div>
+        <div class="features-section" style="margin-top: 0;">
+            <div style="max-width: 800px; margin: 0 auto; color: #555; line-height: 1.8; font-size: 18px;">
+                <p style="margin-bottom: 20px;">
+                    <span class="about-page" style="font-weight: bold; font-size: 28px;"><span class="mango">Mango</span><span class="bridge">Bridge</span></span> is a cutting-edge multilingual communication platform designed to break down language barriers in the workplace. Our mission is to enable seamless collaboration across global teams, regardless of the languages they speak.
+                </p>
 
-        <!-- features section -->
-        <div class="features-section">
-            <h2 class="features-title">Why Choose <span class="mango">Mango</span><span class="bridge">Bridge</span>?</h2>
-            
-            <!-- features nav -->
-            <nav class="features-nav">
-                <button class="feature-nav-btn active" data-feature="translation">
-                    Translation
-                </button>
-                <button class="feature-nav-btn" data-feature="groups">
-                    Group Chats
-                </button>
-                <button class="feature-nav-btn" data-feature="summaries">
-                    Summaries
-                </button>
-                <button class="feature-nav-btn" data-feature="calendar">
-                    Calendar
-                </button>
-            </nav>
+                <h2 style="color: #3d348b; font-size: 28px; margin: 30px 0 15px;">Our Story</h2>
+                <p style="margin-bottom: 20px;">
+                    Founded in 2025, MangoBridge was born from the simple observation that language should never be a barrier to great teamwork. We believe that diverse, multilingual teams are the future of work, and we're committed to making that future accessible to everyone.
+                </p>
 
-            <!-- feature cards -->
-            <div class="feature-cards">
-                <div class="feature-card active" data-feature-content="translation">
-                    <h3>Real-Time Translation</h3>
-                    <p>Break down language barriers with instant message translation and communicate seamlessly with team members across the globe.</p>
-                </div>
+                <h2 style="color: #3d348b; font-size: 28px; margin: 30px 0 15px;">What We Offer</h2>
+                <ul style="margin-bottom: 20px; padding-left: 30px;">
+                    <li style="margin-bottom: 10px;"><strong>Real-Time Translation:</strong> Break down language barriers with instant message translation and communicate seamlessly with team members across the globe</li>
+                    <li style="margin-bottom: 10px;"><strong>Group Collaboration:</strong> Organize conversations and keep teams connected</li>
+                    <li style="margin-bottom: 10px;"><strong>Meeting Summaries:</strong> Stay on top of important details with automatic transcription</li>
+                    <li style="margin-bottom: 10px;"><strong>Integrated Calendar:</strong> Schedule and manage events seamlessly</li>
+                </ul>
 
-                <div class="feature-card" data-feature-content="groups">
-                    <h3>Group Conversations</h3>
-                    <p>Keep conversations organized and accessible to the right people.</p>
-                </div>
+                <h2 style="color: #3d348b; font-size: 28px; margin: 30px 0 15px;">Our Values</h2>
+                <p style="margin-bottom: 20px;">
+                    We're committed to inclusivity, innovation, and empowering global collaboration. At MangoBridge, we believe that every voice deserves to be heard, understood, and valued regardless of the language it speaks.
+                </p>
 
-                <div class="feature-card" data-feature-content="summaries">
-                    <h3>Meeting Summaries</h3>
-                    <p>Automatically generate and save summaries of your team meetings.</p>
-                </div>
+                <h2 style="color: #3d348b; font-size: 28px; margin: 30px 0 15px;">Get in Touch</h2>
+                <p style="margin-bottom: 20px;">
+                    Have questions or feedback? We'd love to hear from you! Reach out to us at <a href="mailto:support@mangobridge.com" style="color: #7678ed; text-decoration: none; font-weight: 600;">support@mangobridge.com</a>
+                </p>
 
-                <div class="feature-card" data-feature-content="calendar">
-                    <h3>Integrated Calendar</h3>
-                    <p>Schedule events and never miss important meetings.</p>
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="/signup" class="login-btn" style="display: inline-block; width: auto; padding: 15px 40px; text-decoration: none;">
+                        Get Started Today
+                    </a>
                 </div>
             </div>
         </div>
@@ -329,7 +275,7 @@
         <div class="footer-container">
             <div class="footer-content">
                 <div class="footer-about">
-                    <span class="about-page" style="font-weight: bold;"><span class="mango">Mango</span><span class="bridge">Bridge</span></span>
+                    <h3><span class="about-page" style="font-weight: bold;"><span class="mango">Mango</span><span class="bridge">Bridge</span></span></h3>
                     <p>Connect your team across languages with real-time communication.</p>
                     
                     <div class="footer-subscribe">
@@ -366,7 +312,7 @@
                         <a href="https://www.linkedin.com/in/angelicamatos/" target="_blank" rel="noopener noreferrer" class="social-icon" title="LinkedIn">
                             <i class="fa-brands fa-linkedin-in"></i>
                         </a>
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" title="Facebook">
+                        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" class="social-icon" title="Facebook">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
                         <a href="https://github.com/angy255" target="_blank" rel="noopener noreferrer" class="social-icon" title="GitHub">
@@ -446,26 +392,6 @@
             if (languageSelector && !languageSelector.contains(event.target)) {
                 dropdown.classList.remove('active');
             }
-        });
-
-        // feature nav functionality
-        const navButtons = document.querySelectorAll('.feature-nav-btn');
-        const featureCards = document.querySelectorAll('.feature-card');
-
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const feature = button.getAttribute('data-feature');
-                
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                featureCards.forEach(card => card.classList.remove('active'));
-                
-                const selectedCard = document.querySelector(`[data-feature-content="${feature}"]`);
-                if (selectedCard) {
-                    selectedCard.classList.add('active');
-                }
-            });
         });
 
         // newsletter subscription

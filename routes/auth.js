@@ -134,6 +134,27 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+// GET About page
+router.get('/about', (req, res) => {
+  res.render('about', {
+    title: 'About - MangoBridge'
+  });
+});
+
+// GET Privacy Policy page
+router.get('/privacy', (req, res) => {
+  res.render('privacy', {
+    title: 'Privacy Policy - MangoBridge'
+  });
+});
+
+// GET Terms of Service page
+router.get('/tos', (req, res) => {
+  res.render('tos', {
+    title: 'Terms of Service - MangoBridge'
+  });
+});
+
 // GET Profile page (own profile)
 router.get('/profile', ensureAuth, async (req, res) => {
   try {

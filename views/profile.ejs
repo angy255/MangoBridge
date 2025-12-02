@@ -22,7 +22,7 @@
                 <% if (isOwnProfile) { %>
                     <a href="/" class="btn btn-secondary">Back to home</a>
                 <% } else { %>
-                    <a href="/?tab=unread" class="btn btn-secondary"> Back to Group Chats</a>
+                    <a href="/?tab=unread" class="btn btn-secondary">Back to Group Chats</a>
                 <% } %>
                 <a href="/logout" class="logout-btn">Logout</a>
             </div>
@@ -168,6 +168,15 @@
         </div>
     </div>
 
+    <!-- footer -->
+    <div class="app-footer">
+        <span>© 2025 MangoBridge</span>
+        <span class="footer-divider">•</span>
+        <a href="#">Help</a>
+        <span class="footer-divider">•</span>
+        <a href="#">Feedback</a>
+    </div>
+
     <% if (isOwnProfile) { %>
         <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
         <script>
@@ -248,9 +257,7 @@
             });
         </script>
     <% } else { %>
-        <!-- script to handle tab navigation for non-profile owners -->
         <script>
-            // if coming from group chats, auto-switch to that tab on return
             window.addEventListener('DOMContentLoaded', () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const tab = urlParams.get('tab');

@@ -102,13 +102,17 @@ function renderHomeMessages() {
     container.innerHTML = parentMessages.map(msg => {
         const replies = messages.filter(r => r.parentMessageId === msg._id);
         
-        const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
+        // check if userId exists before calling toString()
+        const isOwnMessage = msg.userId && currentUser && currentUser.id && 
+                            msg.userId.toString() === currentUser.id.toString();
         let html = createMessageCard(msg, true, false, isOwnMessage, true);
         
         if (replies.length > 0) {
             html += '<div class="replies-container">';
             replies.forEach(reply => {
-                const isOwnReply = reply.userId.toString() === currentUser.id.toString();
+                // check if userId exists before calling toString()
+                const isOwnReply = reply.userId && currentUser && currentUser.id && 
+                                  reply.userId.toString() === currentUser.id.toString();
                 html += createMessageCard(reply, false, false, isOwnReply, false, false, true);
             });
             html += '</div>';
@@ -177,7 +181,9 @@ function getUserAvatarHTML(msg) {
 // create message card HTML
 function createMessageCard(msg, showCheckbox = false, markAsReadBtn = false, showActions = false, showReply = false, isArchived = false, isReply = false) {
     
-    const isOwnMessage = msg.userId.toString() === currentUser.id.toString();
+    // check if userId exists before calling toString()
+    const isOwnMessage = msg.userId && currentUser && currentUser.id && 
+                        msg.userId.toString() === currentUser.id.toString();
     const isEditing = editingMessageId === msg._id;
     const isReplying = replyingToMessageId === msg._id;
     
@@ -507,7 +513,9 @@ function cancelReply() {
 
 async function deleteMessage(id) {
     const msg = messages.find(m => m._id === id);
-    const isOwnMessage = msg && msg.userId.toString() === currentUser.id.toString();
+    // check if msg and userId exist before calling toString()
+    const isOwnMessage = msg && msg.userId && currentUser && currentUser.id && 
+                        msg.userId.toString() === currentUser.id.toString();
     
     const confirmText = isOwnMessage 
         ? 'Permanently delete this message? This cannot be undone and will be removed for everyone.'
