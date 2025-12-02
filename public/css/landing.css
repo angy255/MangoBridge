@@ -23,7 +23,7 @@ body.landing-page {
 }
 
 .header-container {
-    max-width: 1900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px 40px;
     display: flex;
