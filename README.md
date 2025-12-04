@@ -101,7 +101,7 @@ MangoBridge/
 │   └── landing.ejs          # Marketing landing page
 ├── server.js                # Express server entry point
 └── package.json             # Dependencies
-
+```
 --- 
 
 ## ⚙️ Installation
