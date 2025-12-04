@@ -61,7 +61,7 @@ Translate messages between 13+ languages while preserving cultural context and i
 **Bootstrap or Tailwind CSS coming soon*
 
 ---
-
+<!-- 
 ## 🏗️ Architecture
 ```
 MangoBridge/
@@ -101,8 +101,8 @@ MangoBridge/
 │   └── landing.ejs          # Marketing landing page
 ├── server.js                # Express server entry point
 └── package.json             # Dependencies
-```
---- 
+``` 
+--- -->
 
 ## ⚙️ Installation
 
