@@ -112,11 +112,13 @@
 
 /* reply form */
 .reply-form {
-    background: #e8f5e9;
+    /* background: #e8f5e9; */
+    background-color: rgb(248, 249, 250);
     padding: 20px;
     border-radius: 10px;
     margin-top: 15px;
-    border: 2px solid #4caf50;
+    /* border: 2px solid #4caf50; */
+    border: 2px solid #5a5a5a;
 }
 
 .reply-form h4 {

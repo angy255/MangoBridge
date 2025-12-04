@@ -35,7 +35,7 @@ router.get('/', requireAuth, async (req, res) => {
 // CREATE new event
 router.post('/', requireAuth, async (req, res) => {
   try {
-    const { date, time, title } = req.body;
+    const { date, time, title, location } = req.body;
 
     if (!date || !time || !title) {
       return res.status(400).json({
@@ -48,7 +48,8 @@ router.post('/', requireAuth, async (req, res) => {
       userId: req.user._id,
       date: new Date(date),
       time,
-      title
+      title,
+      location: location || ''
     });
 
     await event.save();
@@ -69,7 +70,7 @@ router.post('/', requireAuth, async (req, res) => {
 // UPDATE event (EDIT)
 router.patch('/:id', requireAuth, async (req, res) => {
   try {
-    const { title, time, date } = req.body;
+    const { title, time, date, location } = req.body;
     
     const event = await CalendarEvent.findOne({
       _id: req.params.id,
@@ -86,6 +87,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
     if (title !== undefined) event.title = title;
     if (time !== undefined) event.time = time;
     if (date !== undefined) event.date = new Date(date);
+    if (location !== undefined) event.location = location;
 
     await event.save();
 

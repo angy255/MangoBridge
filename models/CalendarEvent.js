@@ -19,6 +19,11 @@ const calendarEventSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  location: {
+    type: String,
+    default: '',
+    trim: true
+  },
   completed: {
     type: Boolean,
     default: false

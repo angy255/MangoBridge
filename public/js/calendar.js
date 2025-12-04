@@ -139,6 +139,7 @@ function renderDayTaskbar(date) {
         <div class="taskbar-event-item ${event.completed ? 'completed' : ''}">
             <div class="event-time">${formatTime(event.time)}</div>
             <div class="event-title">${escapeHtml(event.title)}</div>
+            ${event.location ? `<div style="font-size: 12px; color: #666; margin-top: 5px;">📍 ${escapeHtml(event.location)}</div>` : ''}
             <div class="taskbar-event-actions">
                 <button class="icon-btn" onclick="toggleEventComplete('${event._id}')" title="${event.completed ? 'Mark incomplete' : 'Mark complete'}">
                     ${event.completed ? 'Undo' : 'Completed'}
@@ -206,6 +207,7 @@ if (eventForm) {
         
         const title = document.getElementById('eventTitle').value;
         const time = document.getElementById('eventTime').value;
+        const location = document.getElementById('eventLocation').value;
         
         try {
             const response = await fetch(API_CALENDAR_URL, {
@@ -214,7 +216,8 @@ if (eventForm) {
                 body: JSON.stringify({
                     date: selectedDate.toISOString(),
                     time: time,
-                    title: title
+                    title: title,
+                    location: location
                 })
             });
             
@@ -292,8 +295,17 @@ async function editEvent(eventId) {
     
     content.innerHTML = `
         <h3 style="margin-bottom: 20px; color: #667eea;">Edit Event</h3>
-        <input type="text" id="editEventInput" value="${escapeHtml(event.title)}" 
-               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 20px;">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Title</label>
+            <input type="text" id="editEventTitle" value="${escapeHtml(event.title)}" 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Location</label>
+            <input type="text" id="editEventLocation" value="${escapeHtml(event.location || '')}" 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;" 
+                   placeholder="Enter location (optional)">
+        </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button id="saveEdit" class="btn btn-primary">Save</button>
             <button id="cancelEdit" class="btn btn-secondary">Cancel</button>
@@ -304,9 +316,16 @@ async function editEvent(eventId) {
     document.body.appendChild(modal);
     
     document.getElementById('saveEdit').addEventListener('click', async () => {
-        const newTitle = document.getElementById('editEventInput').value.trim();
+        const newTitle = document.getElementById('editEventTitle').value.trim();
+        const newLocation = document.getElementById('editEventLocation').value.trim();
         
-        if (!newTitle || newTitle === event.title) {
+        if (!newTitle) {
+            modal.remove();
+            return;
+        }
+        
+        // check if anything changed
+        if (newTitle === event.title && newLocation === (event.location || '')) {
             modal.remove();
             return;
         }
@@ -315,7 +334,10 @@ async function editEvent(eventId) {
             const response = await fetch(`${API_CALENDAR_URL}/${eventId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: newTitle })
+                body: JSON.stringify({ 
+                    title: newTitle,
+                    location: newLocation
+                })
             });
             
             const data = await response.json();
@@ -347,7 +369,7 @@ async function editEvent(eventId) {
     
     // focus input
     setTimeout(() => {
-        const input = document.getElementById('editEventInput');
+        const input = document.getElementById('editEventTitle');
         input.focus();
         input.select();
     }, 100);
@@ -408,4 +430,3 @@ if (eventModal) {
 }
 
 console.log('✅ calendar.js loaded successfully');
-

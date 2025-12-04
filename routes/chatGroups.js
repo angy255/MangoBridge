@@ -18,9 +18,32 @@ router.get('/', requireAuth, async (req, res) => {
       .populate('members', 'userName avatar email')
       .sort({ createdAt: -1 });
 
+    // fetch messages for each group with readBy data
+    const groupsWithMessages = await Promise.all(groups.map(async (group) => {
+      const messages = await Message.find({
+        _id: { $in: group.messageThreads }
+      }).sort({ timestamp: 1 }).lean();
+
+      // enrich messages with user avatar data
+      const enrichedMessages = await Promise.all(messages.map(async (msg) => {
+        const user = await User.findById(msg.userId).select('avatar userName');
+        return {
+          ...msg,
+          userAvatar: user ? user.avatar : '',
+          userName: user ? user.userName : msg.userName,
+          readBy: msg.readBy || {}
+        };
+      }));
+
+      return {
+        ...group.toObject(),
+        _messages: enrichedMessages
+      };
+    }));
+
     res.json({
       success: true,
-      data: groups
+      data: groupsWithMessages
     });
   } catch (error) {
     console.error('Error fetching chat groups:', error);
@@ -92,15 +115,16 @@ router.get('/:id/messages', requireAuth, async (req, res) => {
 
     const messages = await Message.find({
       _id: { $in: group.messageThreads }
-    }).sort({ timestamp: 1 });
+    }).sort({ timestamp: 1 }).lean();
 
     // enrich messages with user avatar data
     const enrichedMessages = await Promise.all(messages.map(async (msg) => {
       const user = await User.findById(msg.userId).select('avatar userName');
       return {
-        ...msg.toObject(),
+        ...msg,
         userAvatar: user ? user.avatar : '',
-        userName: user ? user.userName : msg.userName
+        userName: user ? user.userName : msg.userName,
+        readBy: msg.readBy || {}
       };
     }));
 
@@ -200,13 +224,13 @@ router.post('/:id/mark-read', requireAuth, async (req, res) => {
       });
     }
 
-    // mark all messages in this group as read that are not from current user
+    // mark messages as read ONLY for current user using the readBy map
     await Message.updateMany(
       { 
         _id: { $in: group.messageThreads },
         userId: { $ne: req.user._id }
       },
-      { $set: { isRead: true } }
+      { $set: { [`readBy.${req.user._id}`]: true } }
     );
 
     res.json({ success: true });

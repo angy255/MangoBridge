@@ -14,24 +14,21 @@ async function initializeGroupChatsBadges() {
         const data = await response.json();
         
         if (data.success) {
+            // Groups now come with _messages already populated from server
             chatGroups = data.data;
             
             let totalUnread = 0;
             
+            // Calculate unread count from the _messages that came with each group
             for (const group of chatGroups) {
-                try {
-                    const msgResponse = await fetch(`/api/chatgroups/${group._id}/messages`);
-                    const msgData = await msgResponse.json();
+                if (group._messages && Array.isArray(group._messages)) {
+                    const unreadCount = group._messages.filter(msg => {
+                        const notOwnMessage = msg.userId !== currentUser.id;
+                        const notReadByCurrentUser = !msg.readBy || !msg.readBy[currentUser.id];
+                        return notOwnMessage && notReadByCurrentUser;
+                    }).length;
                     
-                    if (msgData.success) {
-                        const unreadCount = msgData.data.filter(msg => 
-                            msg.userId !== currentUser.id && !msg.isRead
-                        ).length;
-                        
-                        totalUnread += unreadCount;
-                    }
-                } catch (err) {
-                    console.error(`Error loading messages for group ${group._id}:`, err);
+                    totalUnread += unreadCount;
                 }
             }
             
@@ -68,21 +65,20 @@ async function loadChatGroups() {
         const data = await response.json();
         
         if (data.success) {
+            //groups now come with _messages already populated from server
             chatGroups = data.data;
             
-            // load messages for each group to calculate accurate unread counts
-            const messagePromises = chatGroups.map(group => 
-                fetch(`/api/chatgroups/${group._id}/messages`)
-                    .then(res => res.json())
-                    .then(msgData => {
-                        if (msgData.success) {
-                            group._messages = msgData.data;
-                        }
-                    })
-                    .catch(err => console.error(`Error loading messages for group ${group._id}:`, err))
-            );
-            
-            await Promise.all(messagePromises);
+            // log unread counts for debugging!!
+            chatGroups.forEach(group => {
+                if (group._messages) {
+                    const unreadCount = group._messages.filter(msg => {
+                        const notOwnMessage = msg.userId !== currentUser.id;
+                        const notReadByCurrentUser = !msg.readBy || !msg.readBy[currentUser.id];
+                        return notOwnMessage && notReadByCurrentUser;
+                    }).length;
+                    console.log(`Group ${group.name} has ${unreadCount} unread messages`);
+                }
+            });
             
             renderChatGroups();
             updateGroupBadges();
@@ -162,6 +158,7 @@ function renderChatGroups() {
     
     container.innerHTML = chatGroups.map(group => {
         const unreadCount = getGroupUnreadCount(group._id);
+        console.log(`Rendering group ${group.name} with ${unreadCount} unread messages`);
         
         return `
         <div class="chat-group-item ${selectedGroupId === group._id ? 'active' : ''}" 
@@ -193,7 +190,6 @@ function renderGroupMessages() {
     
     if (emptyState) emptyState.style.display = 'none';
     
-    // sort messages by timestamp - most recent first
     const sortedMessages = [...groupMessages].sort((a, b) => 
         new Date(b.timestamp) - new Date(a.timestamp)
     );
@@ -239,19 +235,28 @@ function renderGroupMessages() {
 // get unread count for a group
 function getGroupUnreadCount(groupId) {
     const group = chatGroups.find(g => g._id === groupId);
-    if (!group) return 0;
+    if (!group) {
+        console.log(`Group ${groupId} not found`);
+        return 0;
+    }
     
-    const messages = group._messages || groupMessages;
+    if (!group._messages) {
+        console.log(`Group ${group.name} has no _messages array`);
+        return 0;
+    }
     
-    const unreadCount = messages.filter(msg => {
-        const isInGroup = group.messageThreads.includes(msg._id);
+    const messages = group._messages;
+    
+    const unreadMessages = messages.filter(msg => {
         const notOwnMessage = msg.userId !== currentUser.id;
-        const notRead = !msg.isRead;
+        const notReadByCurrentUser = !msg.readBy || !msg.readBy[currentUser.id];
         
-        return isInGroup && notOwnMessage && notRead;
-    }).length;
+        return notOwnMessage && notReadByCurrentUser;
+    });
     
-    return unreadCount;
+    console.log(`Group ${group.name}: ${unreadMessages.length} unread out of ${messages.length} total messages`);
+    
+    return unreadMessages.length;
 }
 
 // update all group badges
@@ -259,6 +264,8 @@ function updateGroupBadges() {
     const totalUnread = chatGroups.reduce((sum, group) => {
         return sum + getGroupUnreadCount(group._id);
     }, 0);
+    
+    console.log(`Total unread across all groups: ${totalUnread}`);
     
     const badge = document.getElementById('unreadBadge');
     if (badge) {
@@ -278,7 +285,6 @@ async function createNewGroup() {
     
     document.getElementById('createGroupModal').classList.add('active');
     
-    // filter out current user from member selection
     const otherUsers = allUsers.filter(user => user._id !== currentUser.id);
     
     const usersList = document.getElementById('newGroupUsersList');
@@ -348,7 +354,6 @@ function closeCreateGroupModal() {
 // select group and display info
 async function selectGroup(groupId) {
     selectedGroupId = groupId;
-    renderChatGroups();
     
     const group = chatGroups.find(g => g._id === groupId);
     if (group) {
@@ -362,7 +367,6 @@ async function selectGroup(groupId) {
         const memberNames = group.members?.map(m => m.userName || 'Unknown').join(', ') || 'No members';
         membersSpan.innerHTML = `<strong>Members:</strong> ${memberNames}`;
         
-        // check if current user is the creator to show/hide management buttons
         const isCreator = group.createdBy.toString() === currentUser.id;
         const manageBtn = document.querySelector('#selectedGroupInfo button[onclick="manageGroupMembers()"]');
         const deleteBtn = document.querySelector('#selectedGroupInfo button[onclick="deleteCurrentGroup()"]');
@@ -378,7 +382,23 @@ async function selectGroup(groupId) {
         }
         
         await loadGroupMessages(groupId);
+        
+        // mark messages as read
         await markGroupMessagesAsRead(groupId);
+        
+        // update local messages array with readBy data
+        if (group._messages && Array.isArray(group._messages)) {
+            group._messages.forEach(msg => {
+                if (!msg.readBy) {
+                    msg.readBy = {};
+                }
+                msg.readBy[currentUser.id] = true;
+            });
+        }
+        
+        // update the UI immediately
+        renderChatGroups();
+        updateGroupBadges();
     }
 }
 
@@ -388,36 +408,34 @@ async function markGroupMessagesAsRead(groupId) {
     if (!group) return;
     
     try {
-        await fetch(`/api/chatgroups/${groupId}/mark-read`, {
+        const response = await fetch(`/api/chatgroups/${groupId}/mark-read`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
         
-        await loadGroupMessages(groupId);
-        await loadChatGroups();
-        updateGroupBadges();
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log(`Marked messages as read for group ${group.name}`);
+        }
     } catch (error) {
         console.error('Error marking messages as read:', error);
     }
 }
 
-// create a new group chat (starts a chat in existing group)
 function createGroupChat() {
     if (!selectedGroupId) {
         showNotification('Please select a group first', 'error');
         return;
     }
-    
     showNewMessageForm();
 }
 
-// show new message form
 function showNewMessageForm() {
     document.getElementById('newMessageForm').style.display = 'block';
     document.getElementById('newMessageBtn').style.display = 'none';
 }
 
-// hide new message form
 function hideNewMessageForm() {
     document.getElementById('newMessageForm').style.display = 'none';
     document.getElementById('newMessageBtn').style.display = 'block';
@@ -425,7 +443,6 @@ function hideNewMessageForm() {
     document.getElementById('groupTranslationPreview').classList.remove('active');
 }
 
-// preview group message translation
 async function previewGroupTranslation() {
     const messageText = document.getElementById('groupMessageText').value.trim();
     const sourceLang = document.getElementById('groupSourceLang').value;
@@ -483,7 +500,6 @@ async function previewGroupTranslation() {
     }
 }
 
-// send group message
 async function sendGroupMessage() {
     if (!selectedGroupId) {
         showNotification('Please select a group first', 'error');
@@ -525,7 +541,6 @@ async function sendGroupMessage() {
     }
 }
 
-// delete group message
 async function deleteGroupMessage(messageId) {
     showConfirmModal('Delete this message? This cannot be undone.', async () => {
         try {
@@ -548,7 +563,6 @@ async function deleteGroupMessage(messageId) {
     });
 }
 
-// manage group members
 async function manageGroupMembers() {
     if (!selectedGroupId) return;
     
@@ -557,8 +571,15 @@ async function manageGroupMembers() {
     const group = chatGroups.find(g => g._id === selectedGroupId);
     if (!group) return;
     
+    // sort current members alphabetically by userName
+    const sortedMembers = [...group.members].sort((a, b) => {
+        const nameA = (a.userName || '').toLowerCase();
+        const nameB = (b.userName || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
+    
     const currentList = document.getElementById('currentMembersList');
-    currentList.innerHTML = group.members.map(member => `
+    currentList.innerHTML = sortedMembers.map(member => `
         <div class="member-item">
             <div style="display: flex; align-items: center;">
                 <div class="user-avatar-small">
@@ -576,10 +597,16 @@ async function manageGroupMembers() {
         </div>
     `).join('');
     
-    // filter out current user from available users list
     const availableUsers = allUsers.filter(u => 
         !group.members.some(m => m._id === u._id) && u._id !== currentUser.id
     );
+    
+    // sort available users alphabetically by userName
+    availableUsers.sort((a, b) => {
+        const nameA = (a.userName || '').toLowerCase();
+        const nameB = (b.userName || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
     
     const availableList = document.getElementById('availableUsersList');
     if (availableUsers.length === 0) {
@@ -605,7 +632,6 @@ async function manageGroupMembers() {
     document.getElementById('manageMembersModal').classList.add('active');
 }
 
-// add member to group
 async function addMember(userId) {
     if (!selectedGroupId) return;
     
@@ -629,7 +655,6 @@ async function addMember(userId) {
     }
 }
 
-// remove member from group
 async function removeMember(userId) {
     if (!selectedGroupId) return;
     
@@ -655,20 +680,14 @@ async function removeMember(userId) {
     });
 }
 
-// close members modal
 async function closeMembersModal() {
     document.getElementById('manageMembersModal').classList.remove('active');
-    
-    // reload group data to reflect changes
     await loadChatGroups();
-    
-    // if a group is selected, refresh its view
     if (selectedGroupId) {
         await selectGroup(selectedGroupId);
     }
 }
 
-// delete current group 
 async function deleteCurrentGroup() {
     if (!selectedGroupId) return;
     
@@ -686,30 +705,20 @@ async function deleteCurrentGroup() {
             if (data.success) {
                 showNotification('Group deleted', 'success');
                 
-                // clear selected group state
                 const deletedGroupId = selectedGroupId;
                 selectedGroupId = null;
                 
-                // hide group info and forms
                 document.getElementById('selectedGroupInfo').style.display = 'none';
                 document.getElementById('newMessageForm').style.display = 'none';
                 document.getElementById('newMessageBtn').style.display = 'block';
                 
-                // clear messages list
                 document.getElementById('groupMessagesList').innerHTML = '';
                 const emptyState = document.getElementById('groupEmptyState');
                 if (emptyState) emptyState.style.display = 'block';
                 
-                // remove the deleted group from the chatGroups array
                 chatGroups = chatGroups.filter(g => g._id !== deletedGroupId);
-                
-                // re-render the groups sidebar to remove the deleted group
                 renderChatGroups();
-                
-                // update badges
                 updateGroupBadges();
-                
-                // reload all data to ensure consistency
                 await loadChatGroups();
             }
         } catch (error) {
@@ -798,7 +807,6 @@ async function transcribeGroupAudio(audioBlob) {
         showNotification('Failed to transcribe audio', 'error');
     }
 }
-
 
 function escapeHtml(text) {
     const div = document.createElement('div');

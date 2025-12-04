@@ -33,7 +33,8 @@
         <div class="profile-container">
             <div class="profile-header">
                 <h1><%= isOwnProfile ? 'My Profile' : user.userName + "'s Profile" %></h1>
-                <p><%= isOwnProfile ? 'Manage your profile settings' : 'View user profile' %></p>
+                <!-- <p><%= isOwnProfile ? 'Manage your profile settings' : 'View user profile' %></p> -->
+                 <!-- can maybe use this to display team that user is a part of (sales, engineering, design) -->
             </div>
 
             <% if (locals.messages.errors) { %>
