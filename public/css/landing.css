@@ -35,7 +35,7 @@ body.landing-page {
 .header-logo {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
     text-decoration: none;
 }
 
@@ -45,9 +45,9 @@ body.landing-page {
 }
 
 .header-logo-text {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
-    color: #7678ed;
+    /* color: #7678ed; */
 }
 
 .header-nav {
@@ -107,16 +107,15 @@ body.landing-page {
 }
 
 .logo-text {
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
 
-.logo-name {
-    font-size: 48px;
-    font-weight: 700;
-    color: #7678ed;
+.logo-info{
+    color:#3d348b;
+    font-size: 20px;
 }
 
 /* login section */
@@ -229,13 +228,27 @@ body.landing-page {
 
 .mango {
     color: #3d348b;
+    /* color: #3e47c7; */
     font-size: 32px;
 }
 
+.mango-logo{
+    color: #3d348b;
+    font-size: 50px;
+    font-weight: 700;
+}
+
 .bridge {
-    color: #f18701;
-    /* color: #F35B04; */
+    /* color: #f26100; */
+    color: #F35B04;
     font-size: 32px;
+}
+
+.bridge-logo{
+    /* color: #f26100; */
+    color: #F35B04;
+    font-size: 50px;
+    font-weight: 700;
 }
 
 .features-nav {

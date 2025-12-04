@@ -125,14 +125,14 @@ function toggleEditTranscript() {
             transcriptDiv.setAttribute('data-original', textarea.value);
         }
         isTranscriptEditing = false;
-        editBtn.innerHTML = '✏️ Edit Transcript';
+        editBtn.innerHTML = 'Edit Transcript';
         editBtn.classList.remove('btn-success');
         editBtn.classList.add('btn-secondary');
     } else {
         const currentText = transcriptDiv.textContent;
         transcriptDiv.innerHTML = `<textarea style="width: 100%; min-height: 200px; padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-family: inherit; font-size: 14px;">${currentText}</textarea>`;
         isTranscriptEditing = true;
-        editBtn.innerHTML = '💾 Save Changes';
+        editBtn.innerHTML = 'Save Changes';
         editBtn.classList.remove('btn-secondary');
         editBtn.classList.add('btn-success');
     }
