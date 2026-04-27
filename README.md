@@ -1,13 +1,13 @@
-# MangoBridge - Multilingual Workplace Communication Platform
+# MangoBridge - Multilingual Workplace Platform
 
 **Klaviyo AI Builder Residency Application**
 
 > "If you talk to a man in a language he understands, that goes to his head. If you talk to him in his language, that goes to his heart."
-> - Nelson Mandela
+> Nelson Mandela
 
 **Video URL:** TBD
 
-**Live App:** [https://mangobridge.onrender.com/](https://mangobridge.onrender.com/) | **Repo:** [github.com/angy255/MangoBridge](https://github.com/angy255/MangoBridge)
+**Live App: **[https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
 
 ---
 
@@ -15,9 +15,9 @@
 
 Language is the single biggest invisible barrier in the global workplace, and it costs companies far more than they realize.
 
-A 2025 report by DeepL found that **70% of U.S. enterprises with global operations face language barriers on a daily basis**. These are not minor inconveniences. They lead to measurably reduced productivity, reduced participation in meetings and decisions, and reduced creativity among teams. When people cannot express themselves fully, ideas die in translation. Immigrant workers and non-native speakers are disproportionately impacted: they are often the most knowledgeable voices in the room but the least heard.
+A 2025 report by DeepL found that **70% of U.S. enterprises with global operations face language barriers on a daily basis**. These are not minor inconveniences. They lead to measurably reduced productivity, reduced participation in meetings and decisions, and reduced creativity among teams. When people cannot express themselves fully, ideas die in translation. 
 
-The affected audience is broad: multinational companies, remote-first teams, immigrant-led communities, healthcare workers serving ESL populations, and NGOs operating across borders. The current "solution" for many teams is a patchwork of copy-pasting into translation tools, relying on bilingual colleagues to bridge gaps, or accepting miscommunication as the cost of doing business globally.
+The affected audience is broad: multinational companies, remote-first teams, immigrant-led communities, healthcare workers serving ESL populations, and NGOs operating across borders. The current solution for many teams is a patchwork of copy-pasting into translation tools, relying on bilingual colleagues to bridge gaps, or accepting miscommunication as the cost of doing business globally.
 
 **Success looks like:** a team of 10 people across 4 countries being able to hold a group chat, run a meeting, and review notes with translation built into the workflow. The outcome is measured in time saved, participation from non-native speakers, and reduction in miscommunication-related errors.
 
@@ -33,7 +33,7 @@ MangoBridge is a full-stack AI-powered multilingual workplace platform that remo
 - **Integrated calendar tools** for planning events and tracking tasks.
 - **Secure multi-user authentication** with profile management, per-user archive state, and group read tracking.
 
-AI is not supplementary here. Without the DeepL translation API and Deepgram's speech-to-text and summarization APIs, MangoBridge is just a chat app. The AI layer is what makes participation more equitable: a team member can write or speak in one language and create translated collaboration artifacts for the rest of the team.
+AI is not supplementary here. The AI layer is what makes participation more equitable: a team member can write or speak in one language and create translated collaboration artifacts for the rest of the team.
 
 ---
 
@@ -97,7 +97,7 @@ MongoDB   External APIs
 
 **Where it accelerated development:**
 
-I used Claude Code and Cursor throughout the build. The biggest time savings were in boilerplate: setting up Passport.js authentication flows, wiring upload handling, and scaffolding MongoDB schemas. AI was also useful for debugging asynchronous API integration issues around transcription, translation, and route responses.
+I used Claude Code throughout the build. The biggest time savings were in boilerplate: setting up Passport.js authentication flows, wiring upload handling, and scaffolding MongoDB schemas. AI was also useful for debugging asynchronous API integration issues around transcription, translation, and route responses.
 
 **Where it got in the way:**
 
@@ -147,8 +147,6 @@ npm start
 
 ## Demo
 
-The live application is accessible at: **[https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
-
 **Core flows to demo:**
 
 1. **Sign up / log in** - Create an account and profile.
@@ -156,9 +154,7 @@ The live application is accessible at: **[https://mangobridge.onrender.com/](htt
 3. **Meeting workflow** - Record audio in the meeting tab, generate a transcript, translate it, and create an AI summary for follow-up.
 4. **Calendar** - Create an event, mark it complete, and review the day taskbar.
 
-**Screenshot:**
-
-![MangoBridge landing page](./images/mangobridge-landing-page-screenshot.png)
+![MangoBridge demo](./images/mangobridge-demo.gif)
 
 ---
 
