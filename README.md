@@ -5,9 +5,9 @@
 > "If you talk to a man in a language he understands, that goes to his head. If you talk to him in his language, that goes to his heart."
 > Nelson Mandela
 
-**Video URL:** TBD
+**Video URL:** [https://www.loom.com/share/31c54cd6b26549ecbb7897d655ac542f](https://www.loom.com/share/31c54cd6b26549ecbb7897d655ac542f)
 
-**Live App:** [https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
+**Live App:** [https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)
 
 ---
 
