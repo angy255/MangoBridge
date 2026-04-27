@@ -7,7 +7,7 @@
 
 **Video URL:** TBD
 
-**Live App: **[https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
+**Live App:** [https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
 
 ---
 
@@ -35,6 +35,8 @@ MangoBridge is a full-stack AI-powered multilingual workplace platform that remo
 
 AI is not supplementary here. The AI layer is what makes participation more equitable: a team member can write or speak in one language and create translated collaboration artifacts for the rest of the team.
 
+MangoBridge is built as an internal workflow tool: it turns multilingual chat, recorded meetings, and calendar follow-up into shared work artifacts that teams can act on without leaving the app. The implementation emphasizes production ownership over a prototype-only demo: it is deployed on Render, persists user and workflow data in MongoDB, and integrates DeepL and Deepgram as external AI services behind authenticated Express routes.
+
 ---
 
 ## AI Integration
@@ -54,7 +56,7 @@ AI is not supplementary here. The AI layer is what makes participation more equi
 
 **Where AI exceeded expectations:** Deepgram's summarization output was useful with minimal prompting, especially for turning raw transcripts into readable follow-up notes.
 
-**Where AI fell short:** Automated translation can still flatten highly contextual phrases. A future improvement would be a review or flagging workflow for sensitive, ambiguous, or low-confidence translations.
+**Future AI hardening:** For sensitive or highly contextual phrases, MangoBridge could add a review or flagging workflow for ambiguous or low-confidence translations.
 
 ---
 
@@ -166,6 +168,8 @@ npm start
 - Meeting transcription validates that audio was provided and that a transcript was generated.
 - Session-protected routes redirect unauthenticated users to login.
 - Multer enforces file type and size limits on uploaded audio and profile images.
+
+**Deployment smoke test:** The Render deployment was verified end-to-end across `/api/health`, authenticated signup/session handling, direct message translation, group chat translation, calendar event create/toggle/delete, meeting transcript translation, meeting summarization, and cleanup of test records.
 
 **Edge cases considered:**
 

@@ -6,5 +6,5 @@ package-lock.json
 .DS_Store
 
 # ignore all files ending in .log, like debug.log, error.log, server.log, etc
-
+*.mov
 *.log

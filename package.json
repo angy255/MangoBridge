@@ -1,5 +1,5 @@
 {
-  "name": "language-app",
+  "name": "mangoBridge",
   "version": "1.0.0",
   "description": "AI-powered multilingual team communication platform",
   "main": "server.js",
