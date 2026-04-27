@@ -7,7 +7,7 @@
 
 **Video URL:** TBD
 
-**Live App:** [mangobridge.onrender.com](https://mangobridge.onrender.com/) | **Repo:** [github.com/angy255/MangoBridge](https://github.com/angy255/MangoBridge)
+**Live App:** [https://mangobridge.onrender.com/](https://mangobridge.onrender.com/) | **Repo:** [github.com/angy255/MangoBridge](https://github.com/angy255/MangoBridge)
 
 ---
 
@@ -147,7 +147,7 @@ npm start
 
 ## Demo
 
-The live application is accessible at: **[mangobridge.onrender.com](https://mangobridge.onrender.com/)**
+The live application is accessible at: **[https://mangobridge.onrender.com/](https://mangobridge.onrender.com/)**
 
 **Core flows to demo:**
 

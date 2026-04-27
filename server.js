@@ -9,6 +9,10 @@ const passport = require('passport');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // passport config
 require('./config/passport')(passport);
 
@@ -31,9 +35,9 @@ app.use((req, res, next) => {
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected successfully'))
+  .then(() => console.log('MongoDB connected successfully'))
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('MongoDB connection error:', err);
     process.exit(1);
   });
 
@@ -73,7 +77,7 @@ app.use('/api/chatgroups', chatGroupRoutes);
 app.use('/api/users', userRoutes);
 
 // log registered routes
-console.log('📋 Registered API routes:');
+console.log('Registered API routes:');
 console.log('   - /api/messages');
 console.log('   - /api/calendar');
 console.log('   - /api/meetings');
@@ -129,10 +133,10 @@ app.use((req, res) => {
 
 // start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Go to: http://localhost:${PORT}`);
-  console.log(`🔑 Deepgram API Key: ${process.env.DEEPGRAM_API_KEY ? 'Configured ✓' : 'Missing ✗'}`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Go to: http://localhost:${PORT}`);
+  console.log(`Deepgram API Key: ${process.env.DEEPGRAM_API_KEY ? 'Configured' : 'Missing'}`);
 });
 
 module.exports = app;
