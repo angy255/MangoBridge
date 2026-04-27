@@ -139,7 +139,7 @@ function renderDayTaskbar(date) {
         <div class="taskbar-event-item ${event.completed ? 'completed' : ''}">
             <div class="event-time">${formatTime(event.time)}</div>
             <div class="event-title">${escapeHtml(event.title)}</div>
-            ${event.location ? `<div style="font-size: 12px; color: #666; margin-top: 5px;">📍 ${escapeHtml(event.location)}</div>` : ''}
+            ${event.location ? `<div style="font-size: 12px; color: #666; margin-top: 5px;">📍 ${escapeHtml(formatLocationText(event.location))}</div>` : ''}
             <div class="taskbar-event-actions">
                 <button class="icon-btn" onclick="toggleEventComplete('${event._id}')" title="${event.completed ? 'Mark incomplete' : 'Mark complete'}">
                     ${event.completed ? 'Undo' : 'Completed'}
@@ -410,6 +410,11 @@ function formatTime(time) {
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${minutes} ${ampm}`;
+}
+
+// Keep the UI's built-in location pin singular, even if users type one.
+function formatLocationText(location) {
+    return String(location).replace(/^(?:\s*📍\s*)+/u, '').trim();
 }
 
 // escape HTML
