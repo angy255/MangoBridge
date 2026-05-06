@@ -95,7 +95,8 @@ app.get('/', (req, res) => {
         userName: req.user.userName,
         avatar: req.user.avatar || req.user.name[0].toUpperCase(),
         theme: req.user.theme || 'light'
-      }
+      },
+      activeTab: req.query.tab || 'home'
     });
   } else {
     res.render('landing', { title: 'MangoBridge - Multilingual Work Platform' }); 

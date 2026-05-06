@@ -1,4 +1,4 @@
-<div id="unread" class="tab-content">
+<div id="unread" class="tab-content <%= activeTab === 'unread' ? 'active' : '' %>">
     <div class="chat-container">
         <div class="chat-header">
             <h2>My Group Chats</h2>
@@ -42,7 +42,7 @@
                 <!-- Group Messages -->
                 <div class="group-messages-section">
                     <!-- New Message Form (shows at top) -->
-                    <div id="newMessageForm" style="display: none; margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div id="newMessageForm" style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 10px;">
                         <h4 style="margin-bottom: 15px; color: #667eea;">New Message</h4>
                         <div class="form-row">
                             <div class="form-group">
@@ -107,7 +107,7 @@
                     </div>
 
                     <!-- New Message Button (shows when form is hidden) -->
-                    <div id="newMessageBtn" style="margin-top: 20px;">
+                    <div id="newMessageBtn" style="display: none; margin-top: 20px;">
                         <button class="btn btn-primary" onclick="showNewMessageForm()">
                             Send New Message
                         </button>

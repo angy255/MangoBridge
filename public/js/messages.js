@@ -18,22 +18,22 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// update unread badge
+// update unread badge (home feed only; #unreadBadge is the Group Chats nav badge — see unreadMessages.js)
 function updateUnreadBadge() {
-    const badge = document.getElementById('unreadBadge');
-    
     const unreadCount = unreadMessages.filter(msg => {
         return !msg.isRead && msg.userId !== currentUser.id;
     }).length;
 
-    if (badge) {
-        if (unreadCount > 0) {
-            badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-            badge.style.display = 'inline-flex';
-        } else {
-            badge.textContent = '';
-            badge.style.display = 'none';
-        }
+    const badge = document.getElementById('homeUnreadBadge');
+
+    if (!badge) return;
+
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.style.display = 'inline-flex';
+    } else {
+        badge.textContent = '';
+        badge.style.display = 'none';
     }
 }
 
